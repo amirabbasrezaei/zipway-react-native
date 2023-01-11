@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "zipway",
+    "slug": "zipway",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/zipwayIcon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/zipwayIcon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "permissions": [
+        "SIM_STATE_READY",
+        "ACCESS_FINE_LOCATION",
+        "RECEIVE_SMS",
+        "READ_SMS"
+      ],
+      "package": "com.amirabbas99.zipway"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiYW1pcmFiYmFzOTkiLCJhIjoiY2w5eGJreWg3MDhtZzNwczRha3g0cDJjbSJ9.Z9DGh-XJrE7B_D60pzsyUA"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "db63e782-d40e-41fe-b6cb-4851d7ceb0b5"
+      }
+    }
+  }
+}

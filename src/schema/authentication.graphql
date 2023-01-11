@@ -1,0 +1,8 @@
+mutation Signin($userIdentity: userIdentityInput!) {
+  signin(userIdentity: $userIdentity) {
+    token
+    userErrors {
+      message
+    }
+  }
+}
