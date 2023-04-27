@@ -5,8 +5,6 @@ import * as Device from "expo-device";
 import * as Application from "expo-application";
 import { useAuthenticateStore } from "../stores/authenticateStore";
 
-
-
 export function useSnappedPoint() {
   const { mutate: mutateSnappedPoint, data: snappedPointData } = useMutation({
     mutationFn: (input: number[]) => {
@@ -29,6 +27,7 @@ export function useSnappedPoint() {
 
 export function useZipwayConfig() {
   const { phoneNumber } = useAuthenticateStore();
+  const { mutate: mutateAppLog } = trpc.app.log.useMutation();
 
   const {
     data: zipwayConfigData,
@@ -36,10 +35,8 @@ export function useZipwayConfig() {
     error: zipwayConfigError,
     isError: isZipwayConfigError,
     failureReason: zipwayConfigFailureReason,
-    mutate,
-  } = trpc.app.zipwayConfig.useMutation();
-
-  const mutateZipwayConfig = () => mutate({
+    refetch: zipwayConfigRefetch
+  } = trpc.app.zipwayConfig.useQuery({
     deviceModel: Device.modelName,
     deviceId: Application.androidId,
     phoneNumber,
@@ -47,12 +44,26 @@ export function useZipwayConfig() {
     deviceManufacturer: Device.manufacturer,
   });
 
+  if (isZipwayConfigError) {
+    mutateAppLog({
+      error: zipwayConfigError,
+      section: "inside useZipwayConfig Hook",
+      message: {
+        deviceModel: Device.modelName,
+        deviceId: Application.androidId,
+        phoneNumber,
+        appVersion: Application.nativeApplicationVersion,
+        deviceManufacturer: Device.manufacturer,
+      },
+    });
+  }
+
   return {
-    mutateZipwayConfig,
     zipwayConfigData,
     isZipwayConfigSuccess,
     zipwayConfigError,
     zipwayConfigFailureReason,
     isZipwayConfigError,
+    zipwayConfigRefetch
   };
 }

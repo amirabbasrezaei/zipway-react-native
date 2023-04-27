@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   useSnappConfigMutation,
   useSnappRequestVerifySms,
-} from "../../ReactQuery/snappRequestHooks";
+} from "../../ReactQuery/SnappRequestHooks";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 import {

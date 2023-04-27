@@ -5,9 +5,6 @@ import { trpc } from "./../../../utils/trpc";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 import { useOtpVerify } from "react-native-otp-verify";
 import * as SecureStore from "expo-secure-store";
-import * as Device from "expo-device";
-import * as Application from "expo-application";
-import * as SplashScreen from "expo-splash-screen";
 import { useZipwayConfig } from "../../ReactQuery/Mutations";
 import { useZipwayConfigStore } from "../../stores/zipwayConfigStore";
 
@@ -25,7 +22,7 @@ const ZipwayVerifyNumber = ({ navigation }: Props) => {
   const [code, setCode] = useState<string>("");
   const { phoneNumber } = useAuthenticateStore();
   const { otp, message: otpMessage } = useOtpVerify({ numberOfDigits: 6 });
-  const { mutateZipwayConfig, zipwayConfigData } = useZipwayConfig();
+  const { zipwayConfigRefetch, zipwayConfigData } = useZipwayConfig();
 
   useEffect(() => {
     if (code.length === 6) {
@@ -38,7 +35,7 @@ const ZipwayVerifyNumber = ({ navigation }: Props) => {
       (async () => {
         await SecureStore.setItemAsync("phoneNumber", phoneNumber);
       })().then(() => {
-        mutateZipwayConfig();
+        zipwayConfigRefetch();
       });
     }
   }, [isVerifyLoginCodeSuccess]);
@@ -55,6 +52,7 @@ const ZipwayVerifyNumber = ({ navigation }: Props) => {
       navigation.navigate("MapScreen");
     }
   }, [zipwayConfigData]);
+
 
   return (
     <View className="flex-1 justify-center items-center px-10 ">

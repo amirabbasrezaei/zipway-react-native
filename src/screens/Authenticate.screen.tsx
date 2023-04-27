@@ -4,15 +4,16 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import { useAuthenticateStore } from "../stores/authenticateStore";
 import ZipwaySignIn from "../components/auth/ZipwaySignIn";
 import ZipwayVerifyNumber from "../components/auth/ZipwayVerifyNumber";
 import { useZipwayConfigStore } from "../stores/zipwayConfigStore";
 import ZipwayNewUser from "../components/auth/ZipwayNewUser";
-import { useFocusEffect } from "@react-navigation/native";
-import * as SplashScreen from "expo-splash-screen";
+import {  useIsFocused } from "@react-navigation/native";
 import { useZipwayConfig } from "../ReactQuery/Mutations";
-import {trpc} from "../../utils/trpc"
+import { trpc } from "../../utils/trpc";
+import ZipwayAuthScreen from "./ZipwayAuth.screen";
+import * as SplashScreen from "expo-splash-screen"
+
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
 };
@@ -20,83 +21,56 @@ type Props = {
 const AuthStack = createNativeStackNavigator();
 const AuthenticateScreen = ({ navigation }: Props) => {
   const [appState, setAppState] = useState("LAUNCH");
+  const isFocused = useIsFocused();
   const { setAppConfig, appConfig } = useZipwayConfigStore();
-  const {mutate: mutateAppLog} = trpc.app.log.useMutation()
+  const { mutate: mutateAppLog } = trpc.app.log.useMutation();
   const {
-    isZipwayConfigSuccess,
+    zipwayConfigError,
+    zipwayConfigRefetch,
     zipwayConfigData,
+    isZipwayConfigSuccess,
     zipwayConfigFailureReason,
-    isZipwayConfigError,
-    mutateZipwayConfig,
   } = useZipwayConfig();
 
+
+  isFocused && zipwayConfigRefetch();
+
   useEffect(() => {
+    (async () => {
+      await SplashScreen.hideAsync()
+    })()
     if (isZipwayConfigSuccess) {
       setAppConfig(zipwayConfigData);
       setAppState("AUTHENTICATED");
-      // (async () => {
-      //   await SplashScreen.hideAsync();
-      // })();
+      navigation.navigate("MapScreen");
     }
   }, [zipwayConfigData]);
 
   useEffect(() => {
-    if(zipwayConfigFailureReason?.data){
+    (async () => {
+      await SplashScreen.hideAsync()
+    })()
+    if (zipwayConfigFailureReason?.data["httpStatus"] === 401) {
+      setAppState("UNAUTHENTICATED");
       mutateAppLog({
         error: zipwayConfigFailureReason?.data,
-        section: "AuthenticationScreen/zipwayErrorUseEffect"
-      })
+        section: "AuthenticationScreen/zipwayErrorUseEffect",
+      });
     }
-    if (zipwayConfigFailureReason?.data["httpStatus"] === 401) {
-      // (async () => {
-      //   await SplashScreen.hideAsync();
-      // })();
-      setAppState("UNAUTHENTICATED");
-    }
-  }, [isZipwayConfigError]);
-
-  useFocusEffect(
-    useCallback(() => {
-      mutateZipwayConfig();
-    }, [])
-  );
+  }, [zipwayConfigError]);
 
   useEffect(() => {
-    if (appConfig) {
-      // (async () => {
-      //   await SplashScreen.hideAsync();
-      // })();
-      mutateAppLog({
-        section: "AuthenticationScreen/appConfigUseEffect",
-        message: "app config loaded and headed to MapScreen"
-      })
-      setAppState("AUTHENTICATED");
-    }
-  }, [appConfig]);
-
-  useEffect(() => {
-    if(appState === "AUTHENTICATED") {
-      navigation.navigate("MapScreen");
-    }
-    if("UNAUTHENTICATED"){
-
-    }
-
-  },[appState])
-
+    mutateAppLog({
+      section: "AuthenticationScreen/appStateUseEffect",
+      message: `app state: ${appState}`,
+    });
+  }, [appState]);
 
   return (
     <>
       <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
       {appState === "LAUNCH" ? (
-        <View className="flex-1 h-full w-full bg-white">
-          {/* <Image
-            resizeMode="contain"
-            className="flex-1 w-full h-full"
-            source={require("../../assets/splash.png")}
-          /> */}
-          <Text>ZipWay</Text>
-        </View>
+        <ZipwayAuthScreen />
       ) : appState === "UNAUTHENTICATED" ? (
         <AuthStack.Navigator
           screenOptions={{ headerShown: false, animation: "slide_from_left" }}

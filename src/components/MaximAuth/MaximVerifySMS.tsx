@@ -11,7 +11,7 @@ import { Motion } from "@legendapp/motion";
 import { ArrowLeftIcon, SnappTextIcon } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./MaximLoginModal";
 import classNames from "classnames";
-import { useVerifySnappSmsToken } from "../../ReactQuery/snappRequestHooks";
+import { useVerifySnappSmsToken } from "../../ReactQuery/SnappRequestHooks";
 import * as SecureStore from "expo-secure-store";
 import {
   getHash,

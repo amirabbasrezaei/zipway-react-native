@@ -2,19 +2,16 @@ import {
   View,
   Text,
   TextInput,
-  Keyboard,
   Pressable,
   Vibration,
+  Keyboard
 } from "react-native";
 import React, { useEffect } from "react";
 import classNames from "classnames";
 import { RouteCoordinate, useMapStore } from "../../stores/mapStore";
-import { ArrowLeftIcon, XMarkIcon } from ".././Svgs";
-import { useQuery } from "@tanstack/react-query";
-import { Motion } from "@legendapp/motion";
+import {  ArrowLeftIcon, ArrowRightIcon, MagnifierIcon, XMarkIcon } from ".././Svgs";
 import { trpc } from "../../../utils/trpc";
-import { MotiView } from 'moti'
-
+import { MotiView } from "moti";
 
 type Props = {
   isInputActive: boolean;
@@ -26,7 +23,6 @@ type Props = {
 const SearchLocationInput = ({
   isInputActive,
   setIsInputActive,
-  showNewTrip,
   setShowNewTrip,
 }: Props) => {
   const {
@@ -59,40 +55,45 @@ const SearchLocationInput = ({
       setSearchLocationInput(coordinateToAddressData.formatted_address);
     }
   }, [isCoordinateToAddressSuccedd]);
+
+ 
+
   return (
     <View
       style={{ elevation: 4 }}
       className={classNames(
         "flex-1 absolute w-full px-3 shadow-none flex flex-col justify-center items-center",
-        isInputActive ? "top-6" : "top-1"
+        isInputActive ? "top-4" : "top-1"
       )}
     >
-      <View
-        className={classNames(
-          "flex justify-center items-center w-full",
-          isInputActive ? "flex-row" : "flex-col"
-        )}
-      >
-        {isInputActive ? (
+      {isInputActive ? (
           <View
             onTouchEnd={() => {
               Keyboard.dismiss();
               setIsInputActive(false);
             }}
-            className="w-8 h-8 mr-3 ml-2"
+            className="w-full h-8  items-center flex-row-reverse px-2"
           >
-            <XMarkIcon classStyle="w-8 h-8 fill-black" />
+            <ArrowRightIcon classStyle="w-[25px] h-[25px] fill-gray-600" />
           </View>
         ) : null}
+      <View
+        className={classNames(
+          "flex justify-center items-center w-full ",
+          isInputActive ? "flex-row" : "flex-col"
+        )}
+      >
+        
         {!routeCoordinate?.origin ? (
-          <>
+          <View className={classNames(" w-full flex-1 mt-2 relative items-center", isInputActive ? "h-[56px]" : "h-12")}>
             <TextInput
               placeholder="مبدا ..."
               className={classNames(
-                "appearance-none  w-full mt-2 flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 px-4  rounded-[16px] text-lg   ",
+                "appearance-none  w-full   flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 pr-4 pl-12 rounded-[16px] text-[20]   ",
                 routeCoordinate?.originTitle
-                  ? "text-gray-500 bg-gray-100"
-                  : "text-gray-800 bg-gray-100"
+                  ? "text-gray-500 "
+                  : "text-gray-800 ",
+                  isInputActive ? "h-[56px] w-[95%] border border-gray-200 bg-none" : "h-[20px] w-[100%] bg-gray-50"
               )}
               value={
                 routeCoordinate?.originTitle
@@ -108,7 +109,8 @@ const SearchLocationInput = ({
               cursorColor={"#000"}
               editable={!routeCoordinate?.origin}
             />
-          </>
+            {!isInputActive? <MagnifierIcon classStyle="w-5 h-5 absolute fill-gray-500 top-[15] left-[14]" /> : null}
+          </View>
         ) : null}
         {!isInputActive && !routeCoordinate?.origin ? (
           <View
@@ -122,7 +124,7 @@ const SearchLocationInput = ({
               setRouteCoordinate(route);
               setSearchLocationInput("");
             }}
-            className="h-12 mt-[10] w-full bg-blue-500 rounded-[16px] flex items-center justify-center"
+            className="h-12 mt-[10] w-full b bg-blue-500 rounded-[16px] flex items-center justify-center"
           >
             <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
               تائید مبدا
@@ -130,11 +132,11 @@ const SearchLocationInput = ({
           </View>
         ) : null}
         {routeCoordinate?.origin && !routeCoordinate?.destination ? (
-          <>
+          <View className="h-12 w-full flex-1 mt-2 relative">
             <TextInput
               placeholder="مقصد ..."
               className={classNames(
-                "appearance-none bg-slate-50 mt-2 w-full flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 px-4  rounded-[16px] text-lg   ",
+                "appearance-none  w-full bg-slate-50 flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 pr-4 pl-12 rounded-[16px] text-[20]",
                 routeCoordinate?.destinationTitle
                   ? "text-gray-600"
                   : "text-gray-800"
@@ -153,7 +155,8 @@ const SearchLocationInput = ({
               cursorColor={"#000"}
               editable={!routeCoordinate?.destination}
             />
-          </>
+            <MagnifierIcon classStyle="w-5 h-5 absolute fill-gray-500 top-[15] left-[14]" />
+          </View>
         ) : null}
         {!isInputActive &&
         routeCoordinate?.origin &&
@@ -167,11 +170,12 @@ const SearchLocationInput = ({
               };
               setRouteCoordinate(route);
             }}
-            className="h-12 w-full bg-black mt-[10]  rounded-[16px] flex items-center justify-center"
+            className="h-12 w-full bg-blue-500 mt-[10]  rounded-[16px] flex items-center justify-center"
           >
             <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
               تائید مقصد
             </Text>
+            
           </View>
         ) : null}
         {routeCoordinate?.origin && routeCoordinate?.destination ? (
@@ -193,9 +197,9 @@ const SearchLocationInput = ({
             </View>
             <MotiView
               transition={{ duration: 100, type: "timing" }}
-              from={{width: "100%"}}
+              from={{ width: "100%" }}
               animate={{ width: "80%" }}
-              className=" absolute right-0 bg-black h-full rounded-[25px] items-center justify-center"
+              className=" absolute right-0 bg-blue-500 h-full rounded-[25px] items-center justify-center"
             >
               <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
                 مقایسه سرویس ها
@@ -203,6 +207,7 @@ const SearchLocationInput = ({
             </MotiView>
           </Pressable>
         ) : null}
+        
       </View>
     </View>
   );

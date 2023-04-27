@@ -5,6 +5,7 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Motion } from "@legendapp/motion";
@@ -15,7 +16,7 @@ import classNames from "classnames";
 import {
   useSnappConfigMutation,
   useSnappRequestVerifySms,
-} from "../../ReactQuery/snappRequestHooks";
+} from "../../ReactQuery/SnappRequestHooks";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 
 type Props = {
@@ -62,6 +63,20 @@ const SnappSignIn = ({
     }
   }, []);
 
+  useEffect(() => {
+    const backAction = () => {
+      setStep(0)
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
 
 
   useEffect(() => {
@@ -90,7 +105,7 @@ const SnappSignIn = ({
         </Pressable>
       </View>
       <Text className="text-gray-500 w-full mt-4 font-[IRANSansMedium]">
-        لطفا شماره ای که قبلا با آن در تپسی ثبت نام کرده اید را وارد کنید
+        لطفا شماره ای که قبلا با آن در اسنپ ثبت نام کرده اید را وارد کنید
       </Text>
       <TextInput
         autoFocus

@@ -13,6 +13,7 @@ import { PhoneNumberInput, StepState } from "./TapsiLoginModal";
 import { ArrowLeftIcon, LoadingSpinner, XMarkIcon } from "../Svgs";
 import classNames from "classnames";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
+import { BackHandler } from "react-native";
 
 type Props = {
   step: StepState;
@@ -45,6 +46,20 @@ const TapsiSignIn = ({
     if (phoneNumber) {
       setPhoneNumberInput(phoneNumber);
     }
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      setStep(0)
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
   return (
     <Motion.View

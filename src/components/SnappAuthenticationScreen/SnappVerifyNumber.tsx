@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
-import { useVerifySnappSmsToken } from "../../ReactQuery/snappRequestHooks";
+import { useVerifySnappSmsToken } from "../../ReactQuery/SnappRequestHooks";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   getHash,

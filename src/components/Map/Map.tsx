@@ -1,7 +1,12 @@
-import { View, PermissionsAndroid, Dimensions } from "react-native";
+import {
+  View,
+  PermissionsAndroid,
+  Dimensions,
+  BackHandler,
+} from "react-native";
 import * as Location from "expo-location";
 import MapboxGL, { Camera } from "@rnmapbox/maps";
-import { useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { useMapStore } from "../../stores/mapStore";
 import RenderAnnotations from "./RenderAnnotations";
@@ -10,10 +15,11 @@ import MapBackButton from "./MapBackButton";
 import MapMarker from "./MapMarker";
 import UserLocation from "./UserLocation";
 import { useZipwayConfigStore } from "../../stores/zipwayConfigStore";
-import { trpc } from "../../../utils/trpc";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 import { FocusContext } from "../FocusComponent";
 import Banner from "../Banner";
+import { useAppStore } from "../../stores/appStore";
+import { MotiView } from "moti";
 
 MapboxGL.setAccessToken(
   "pk.eyJ1IjoiYW1pcmFiYmFzOTkiLCJhIjoiY2w5dnlwNG81MGRrZTN0bzZ4ZXdrd2JneSJ9.fvtyAcTO96naV6T0l13i4Q"
@@ -29,6 +35,7 @@ const Map = ({}: Props) => {
 
   const { appConfig } = useZipwayConfigStore();
   const { mutateSnappedPoint, snappedPointData } = useSnappedPoint();
+  const { activeTrip } = useAppStore();
 
   const camera = useRef<Camera>(null);
   const {
@@ -42,112 +49,6 @@ const Map = ({}: Props) => {
     setUserLocation,
     cameraLocation,
   } = useMapStore();
-
-  //// useEffects ////
-
-  useEffect(() => {
-    if (!routeCoordinate?.destination) {
-      const timeOut = setTimeout(() => {
-        mutateSnappedPoint(cameraLocation);
-      }, 300);
-      return () => {
-        clearTimeout(timeOut);
-      };
-    }
-  }, [cameraLocation]);
-
-  useEffect(() => {
-    if (routeCoordinate?.destination && routeCoordinate?.origin) {
-      camera.current?.setCamera({
-        animationMode: "moveTo",
-        animationDuration: 500,
-        type: "CameraStop",
-        padding: {
-          paddingBottom: 200,
-          paddingLeft: 100,
-          paddingRight: 100,
-          paddingTop: 100,
-        },
-        bounds: (() => {
-          return {
-            ne: routeCoordinate?.destination,
-            sw: routeCoordinate?.origin,
-          };
-        })(),
-      });
-
-      return () => {
-        camera.current?.setCamera({
-          animationMode: "moveTo",
-          animationDuration: 500,
-          type: "CameraStop",
-          padding: {
-            paddingBottom: 100,
-            paddingLeft: 100,
-            paddingRight: 100,
-            paddingTop: 100,
-          },
-          bounds: (() => {
-            return {
-              ne: routeCoordinate?.destination,
-              sw: routeCoordinate?.origin,
-            };
-          })(),
-        });
-      };
-    }
-  }, [routeCoordinate]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (searchedLocationCoordinate?.length && !routeCoordinate?.destination) {
-        camera.current?.setCamera({
-          animationMode: "moveTo",
-          centerCoordinate: searchedLocationCoordinate,
-          zoomLevel: 16,
-          animationDuration: 500,
-          type: "CameraStop",
-          padding: {
-            paddingBottom: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingTop: 0,
-          },
-        });
-      }
-    }, 310);
-  }, [searchedLocationCoordinate]);
-
-  useEffect(() => {
-    if (snappedPointData?.data && !routeCoordinate?.destination) {
-      const snapToRoud = snappedPointData?.data["data"]["snap_to_road"];
-      if (snapToRoud.length) {
-        const { lat, lon } = snapToRoud[0]["snapped_points"][0]["point"];
-        setSearchedLocationCoordinate([lon, lat]);
-      }
-    }
-  }, [snappedPointData]);
-
-  useEffect(() => {
-    if (appConfig?.banner) {
-      setFocusState({
-        focusComonent: <Banner banner={appConfig.banner} />,
-        exitAfterPress: appConfig.banner.canGoBack,
-      });
-    }
-
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setUserLocation(location);
-    })();
-  }, []);
-
-  //// ////
 
   /// fns
 
@@ -192,10 +93,153 @@ const Map = ({}: Props) => {
     }
   }
 
+  ///
+
+  //// useEffects ////
+
+  useEffect(() => {
+    if (!routeCoordinate?.destination) {
+      const timeOut = setTimeout(() => {
+        mutateSnappedPoint(cameraLocation);
+      }, 300);
+      return () => {
+        clearTimeout(timeOut);
+      };
+    }
+  }, [cameraLocation]);
+
+  useEffect(() => {
+    if (routeCoordinate?.destination && routeCoordinate?.origin) {
+      camera.current?.setCamera({
+        animationMode: "moveTo",
+        animationDuration: 500,
+        type: "CameraStop",
+        padding: {
+          paddingBottom:  200,
+          paddingLeft: 100,
+          paddingRight: 100,
+          paddingTop: activeTrip ? 200 : 100,
+        },
+        bounds: (() => {
+          return {
+            ne: routeCoordinate?.destination,
+            sw: routeCoordinate?.origin,
+          };
+        })(),
+      });
+
+      return () => {
+        camera.current?.setCamera({
+          animationMode: "moveTo",
+          animationDuration: 500,
+          type: "CameraStop",
+          padding: {
+            paddingBottom: 100,
+            paddingLeft: 100,
+            paddingRight: 100,
+            paddingTop: 100,
+          },
+          bounds: (() => {
+            return {
+              ne: routeCoordinate?.destination,
+              sw: routeCoordinate?.origin,
+            };
+          })(),
+        });
+      };
+    }
+  }, [routeCoordinate, activeTrip]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (searchedLocationCoordinate?.length && !routeCoordinate?.destination) {
+        camera.current?.setCamera({
+          animationMode: "moveTo",
+          centerCoordinate: searchedLocationCoordinate,
+          zoomLevel:  16,
+          animationDuration: 500,
+          type: "CameraStop",
+          padding: {
+            paddingBottom: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            paddingTop: 0,
+          },
+        });
+      }
+    }, 310);
+  }, [searchedLocationCoordinate]);
+
+  useEffect(() => {
+    if (snappedPointData?.data && !routeCoordinate?.destination) {
+      const snapToRoud = snappedPointData?.data["data"]["snap_to_road"];
+      if (snapToRoud.length) {
+        const { lat, lon } = snapToRoud[0]["snapped_points"][0]["point"];
+        setSearchedLocationCoordinate([lon, lat]);
+      }
+    }
+  }, [snappedPointData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (appConfig?.banner) {
+        setFocusState({
+          focusComonent: <Banner banner={appConfig.banner} />,
+          exitAfterPress: appConfig.banner.canGoBack,
+        });
+      }
+
+      (async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location);
+      })();
+    }, [appConfig, Location])
+  );
+
+  useEffect(() => {
+    const backAction = () => {
+      if (!routeCoordinate?.origin && !routeCoordinate?.destination) {
+        BackHandler.exitApp();
+      }
+      console.log(
+        `origin: ${routeCoordinate?.origin}`,
+        `destination: ${routeCoordinate?.destination}`
+      );
+      if (routeCoordinate?.origin && !routeCoordinate?.destination) {
+        setRouteCoordinate({ origin: null, originTitle: null });
+        return true;
+      }
+      if (routeCoordinate?.destination) {
+        setRouteCoordinate({ destination: null, destinationTitle: null });
+        return true;
+      }
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [BackHandler, routeCoordinate]);
+
+  //// ////
+
   return (
-    <View
-      style={{ elevation: 1, zIndex: 1, height: height, width }}
-      className="flex justify-center items-center  "
+    <MotiView
+      transition={{ type: "timing", duration: 300, delay: 500 }}
+      style={{
+        elevation: 1,
+        zIndex: 1,
+        height: activeTrip ? height - 280 : height,
+        width,
+      }}
+      className="flex justify-center items-center "
     >
       <View style={{ width }} className="block flex-1">
         <MapboxGL.MapView
@@ -217,16 +261,18 @@ const Map = ({}: Props) => {
           <MapboxGL.UserLocation />
         </MapboxGL.MapView>
       </View>
-      <UserLocation
-        routeCoordinate={routeCoordinate}
-        moveToUserLocation={moveToUserLocation}
-      />
+      {!activeTrip ? (
+        <UserLocation
+          routeCoordinate={routeCoordinate}
+          moveToUserLocation={moveToUserLocation}
+        />
+      ) : null}
       <MapMarker routeCoordinate={routeCoordinate} />
       <MapBackButton
         backButtonFn={backButtonFn}
         routeCoordinate={routeCoordinate}
       />
-    </View>
+    </MotiView>
   );
 };
 

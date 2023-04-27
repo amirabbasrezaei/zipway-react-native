@@ -1,7 +1,7 @@
 import { View, Text, Vibration, Pressable, Alert } from "react-native";
 import React, { ElementType, useContext, useRef, useState } from "react";
 import { Motion } from "@legendapp/motion";
-import { useThemeStore } from "../stores/themeStore";
+import { useThemeStore } from "../stores/appStore";
 import { FocusContext, UseFocusContextArgs } from "./FocusComponent";
 type Props = {
   children: JSX.Element | JSX.Element[];

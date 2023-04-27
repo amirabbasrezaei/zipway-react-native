@@ -1,21 +1,54 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import * as Application from "expo-application";
 import {
+  getNewPrice,
   ouathSnappRequest,
   snappConfigRequest,
+  snappNewRideRequest,
+  snappServiceTypesRequest,
   verifySnappSmsTokenRequest,
 } from "../requests/snappAPIs";
 import * as Device from "expo-device";
 import * as Cellular from "expo-cellular";
-import { useAuthenticateStore } from "../stores/authenticateStore";
 import { Platform } from "react-native";
-import * as AuthSession from "expo-auth-session";
 
 let cellularName: string = "";
 async function getSnappConfigBodyPromise() {
   await Cellular.getCarrierNameAsync().then((e) => {
     cellularName = e;
   });
+}
+
+const headers = {
+  locale: "fa-IR",
+  "package-name": "cab.zipway.passenger",
+  "user-agent": `${Platform.OS} ; ${Device.manufacturer} ${Device.modelName} ; Passenger/8.0.3`,
+  "x-app-name": `passenger-${Platform.OS}`,
+  "x-app-version": "8.0.3",
+  "x-app-version-code": "251",
+};
+
+export function useSnappNewPrice() {
+  const {
+    isLoading: newSnappPriceLoading,
+    data: newSnappPriceData,
+    isSuccess: isSnappNewPriceSucceed,
+    isError: isSnappNewPriceError,
+    failureReason: snappNewPriceFailureReason,
+    mutate: mutateSnappNewPrice,
+
+  } = useMutation({
+    mutationFn: (NewPricePostData: any) => getNewPrice(NewPricePostData),
+  });
+
+  return {
+    newSnappPriceData,
+    newSnappPriceLoading,
+    isSnappNewPriceSucceed,
+    isSnappNewPriceError,
+    snappNewPriceFailureReason,
+    mutateSnappNewPrice,
+  };
 }
 
 export function useSnappConfigMutation() {
@@ -71,14 +104,7 @@ export function useSnappRequestVerifySms() {
         device_id: Application.androidId,
         cellphone,
       };
-      const headers = {
-        locale: "fa-IR",
-        "package-name": "cab.zipway.passenger",
-        "user-agent": `${Platform.OS} ; ${Device.manufacturer} ${Device.modelName} ; Passenger/8.0.3`,
-        "x-app-name": `passenger-${Platform.OS}`,
-        "x-app-version": "8.0.3",
-        "x-app-version-code": "251",
-      };
+
       return ouathSnappRequest(body, headers);
     },
   });
@@ -126,25 +152,51 @@ export function useVerifySnappSmsToken() {
   };
 }
 
-const oathSampleBody = {
-  grant_type: "sms_v2",
-  client_id: "ios_sadjfhasd9871231hfso234",
-  client_secret: "23497shjlf982734-=1031nln",
-  cellphone: "+989038338886",
-  token: "626811",
-  referrer: "pwa",
-  device_id: "49311921-052c-4e27-86f2-94e12510d839",
-  secure_id: "49311921-052c-4e27-86f2-94e12510d839",
+export function useNewSnappRide() {
+  const {
+    data: snappNewRideData,
+    isSuccess: isSnappNewRideSuccess,
+    isError: isSnappNewRideError,
+    error: snappNewRideError,
+    mutate: mutateSnappNewRide,
+  } = useMutation({
+    mutationFn: (body) => snappNewRideRequest(body, headers),
+  });
+
+  return {
+    snappNewRideData,
+    isSnappNewRideSuccess,
+    isSnappNewRideError,
+    snappNewRideError,
+    mutateSnappNewRide,
+  };
+}
+
+const sampleResponse = {
+  data: {
+    is_first_ride: false,
+    ride_id: "SNP-230219-89749-5297",
+  },
+  status: 200,
 };
 
-const sampleResponse = `
-"client_id": "snapp-15242641026894969453",
-      "client_secret": "aBXSlnNuYXBwlhd0JV09T4ySKvUelB-NwHVYz1rJtB7-qTcCGscfB3g=",
-      "key": "0b72659ec2cfefd0f4635b6286929299aa8020ae",`;
-
-const firebaseSnapp = `{
-  "fid": "dfY_Uv96QAiENpsjnFJGTq",
-  "authVersion": "FIS_v2",
-  "appId": "1:35960493321:android:93b359725ebf8989",
-  "sdkVersion": "a:16.3.3"
-}`;
+export function useSnappServiceTypes() {
+  const {
+    data: snappServiceData,
+    isSuccess: isSnappServiceSuccess,
+    isError: isSnappServiceError,
+    error: snappServiceError,
+    mutate: mutateSnappService,
+    isLoading: isSnappServiceLoading,
+  } = useMutation({
+    mutationFn: (body: any) => snappServiceTypesRequest(body, headers),
+  });
+  return {
+    snappServiceData,
+    isSnappServiceSuccess,
+    isSnappServiceError,
+    snappServiceError,
+    mutateSnappService,
+    isSnappServiceLoading,
+  };
+}

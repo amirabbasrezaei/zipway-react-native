@@ -17,7 +17,7 @@ const getBaseUrl = () => {
      * you don't have anything else running on it, or you'd have to change it.
      */
     // const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
-    return `https://thirsty-napier-bby5mfvh4.iran.liara.run`
+    return `https://zipways.ir`
     // console.log(localhost)
     // if (!localhost)
     //   throw new Error("failed to get localhost, configure it manually");

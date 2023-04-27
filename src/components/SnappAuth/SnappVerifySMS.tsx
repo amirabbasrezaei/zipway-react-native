@@ -10,7 +10,7 @@ import { Motion } from "@legendapp/motion";
 import { ArrowLeftIcon, SnappTextIcon } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./SnappLoginModal";
 import classNames from "classnames";
-import { useVerifySnappSmsToken } from "../../ReactQuery/snappRequestHooks";
+import { useVerifySnappSmsToken } from "../../ReactQuery/SnappRequestHooks";
 import * as SecureStore from "expo-secure-store";
 import {
   getHash,
@@ -18,6 +18,8 @@ import {
   startOtpListener,
   useOtpVerify,
 } from "react-native-otp-verify";
+import { useAuthenticateStore } from "../../stores/authenticateStore";
+import { BackHandler } from "react-native";
 
 type Props = {
   step: StepState;
@@ -29,11 +31,14 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   const [code, setCode] = useState<string>("");
   const inputRef = useRef(null);
 
+  const { setSnappAuthKey } = useAuthenticateStore();
+
+  
+
   async function saveTokens(data: any) {
-    await SecureStore.setItemAsync(
-      "snapp-accessToken",
-      `Bearer ${data["access_token"]}`
-    );
+    const token = `Bearer ${data["access_token"]}`;
+    await SecureStore.setItemAsync("snapp-accessToken", token);
+    setSnappAuthKey(token);
   }
 
   const {
@@ -45,7 +50,7 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
 
   useEffect(() => {
     if (code.length === 6) {
-      mutateVerifySnappSmsToken({token: code, phoneNumber: phoneNumberInput});
+      mutateVerifySnappSmsToken({ token: code, phoneNumber: phoneNumberInput });
     }
   }, [code]);
 
@@ -55,6 +60,20 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
       setStep(0);
     }
   }, [isVerifySnappSmsTokenSuccess]);
+
+  useEffect(() => {
+    const backAction = () => {
+      setStep(1)
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <Motion.View
@@ -134,12 +153,15 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
 
       <Pressable
         onPress={() => {
-          mutateVerifySnappSmsToken({token: code, phoneNumber: phoneNumberInput});
+          mutateVerifySnappSmsToken({
+            token: code,
+            phoneNumber: phoneNumberInput,
+          });
         }}
         disabled={code.length < 5}
         className={classNames(
           " h-[50]  w-full rounded-md  justify-center items-center",
-          code.length < 5 ? "bg-gray-400" : "bg-blue-500"
+          code.length !== 6 ? "bg-gray-400" : "bg-blue-500"
         )}
       >
         {isVerifySnappSmsTokenLoading ? (

@@ -75,6 +75,7 @@ export function useTapsiNewPrice() {
     isLoading: isTapsiNewPriceLoading,
     mutate: mutateTapsiNewPrice,
     isSuccess: isTapsiNewPriceSucceed,
+    isError: isTapsiNewPriceError
   } = useMutation({
     mutationFn: (body: any) => getTapsiNewPrice(body),
   });
@@ -83,5 +84,6 @@ export function useTapsiNewPrice() {
     isTapsiNewPriceLoading,
     mutateTapsiNewPrice,
     isTapsiNewPriceSucceed,
+    isTapsiNewPriceError
   };
 }

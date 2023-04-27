@@ -1,6 +1,6 @@
 import { AnimatePresence, Motion } from "@legendapp/motion";
-import { createContext, useContext, useEffect, useState } from "react";
-import { Pressable, View, StatusBar } from "react-native";
+import { createContext,  useState } from "react";
+import {  View } from "react-native";
 
 interface FocusState {
   focusComonent: any;

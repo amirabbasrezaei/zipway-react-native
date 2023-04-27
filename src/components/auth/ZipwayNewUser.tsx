@@ -35,7 +35,7 @@ const ZipwayNewUser = ({ navigation }: Props) => {
 
   return (
     <View className="flex-1 bg-white justify-center items-center p-3">
-      <Text className="font-[BlinkerBold] text-[40px]">ZipWay</Text>
+      <Text className="font-[mplusroundBold] text-[45px] text-gray-800">ZIPWAY</Text>
 
       <View className="w-[90%]">
         <TextInput
@@ -53,11 +53,11 @@ const ZipwayNewUser = ({ navigation }: Props) => {
           }}
           className={classNames(
             " h-[55]  w-full rounded-md mt-4 justify-center items-center",
-            isCreateUserLoading ? "bg-gray-100" : "bg-blue-500"
+            isCreateUserLoading ? "bg-gray-100" : "bg-[#07a2fc]"
           )}
         >
           {isCreateUserLoading ? (
-            <ActivityIndicator size="small" color="rgb(59,130,246)" />
+            <ActivityIndicator size="small" color="rgb(7,162,252)" />
           ) : (
             <Text className="font-[IRANSansMedium] text-white">ثبت نام</Text>
           )}

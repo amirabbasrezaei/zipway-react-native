@@ -11,10 +11,14 @@ import { trpc } from "../../../utils/trpc";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 import { useOtpVerify } from "react-native-otp-verify";
 import classNames from "classnames";
+import * as NavigationBar from "expo-navigation-bar";
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
 };
 
+(async () => {
+  await NavigationBar.setBackgroundColorAsync("white");
+})();
 const ZipwaySignIn = ({ navigation }: Props) => {
   const {
     data: loginData,
@@ -44,7 +48,9 @@ const ZipwaySignIn = ({ navigation }: Props) => {
 
   return (
     <View className="flex-1 justify-center items-center bg-white">
-      <Text className="font-[BlinkerBold] text-[40px]">ZipWay</Text>
+      <Text className="font-[mplusroundBold] text-[45px] text-gray-800">
+        ZIPWAY
+      </Text>
       <View className="w-3/4">
         <TextInput
           keyboardType="numeric"
@@ -59,15 +65,22 @@ const ZipwaySignIn = ({ navigation }: Props) => {
             mutateLogin({ phoneNumber: input, hash: hash[0] });
           }}
           className={classNames(
-            " h-[55]  w-full rounded-md mt-4 justify-center items-center",
-            isLoginLoading ? "bg-gray-100" : "bg-blue-500"
+            " h-[55] w-full rounded-md mt-4 justify-center items-center",
+            isLoginLoading ? "bg-gray-100" : "bg-[#07a2fc]"
           )}
         >
           {isLoginLoading ? (
-            <ActivityIndicator size="small" color="rgb(59,130,246)" />
+            <ActivityIndicator size="small" color="rgb(7,162,252)" />
           ) : (
             <Text className="font-[IRANSansMedium] text-white">ورود</Text>
           )}
+        </Pressable>
+        <Pressable className="mt-4" onPress={() => navigation.navigate("PrivacyPolicy")}>
+          <Text className="font-[IRANSansMedium] text-gray-600 text-xs">
+            ورود شما به معنای پذیرش
+            <Text className="font-[IRANSansMedium] text-blue-600 text-xs"> قوانین حریم خصوصی </Text>
+            است.
+          </Text>
         </Pressable>
       </View>
     </View>

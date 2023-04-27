@@ -1,4 +1,11 @@
-import { View, Text, Image, Pressable, TextInput, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Motion } from "@legendapp/motion";
 import { FocusContext, UseFocusContextArgs } from "../FocusComponent";
@@ -6,6 +13,10 @@ import { ArrowLeftIcon, LoadingSpinner } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./TapsiLoginModal";
 import { useTapsiVerifyToken } from "../../ReactQuery/tapsiRequestHooks";
 import classNames from "classnames";
+import { useAuthenticateStore } from "../../stores/authenticateStore";
+import * as SecureStore from "expo-secure-store";
+import { BackHandler } from "react-native";
+
 
 type Props = {
   step: StepState;
@@ -16,9 +27,20 @@ type Props = {
 const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   const [code, setCode] = useState<string>("");
   const inputRef = useRef(null);
+  const { setTapsiAuthKey } = useAuthenticateStore();
 
-  const { mutateTapsiVerifyToken, isTapsiVerifyTokenSucceed, isTapsiVerifyTokenLoading } =
-    useTapsiVerifyToken();
+  async function saveTokens(data: any) {
+    await SecureStore.setItemAsync("tapsi-accessToken", data);
+    setTapsiAuthKey(data)
+  }
+
+
+  const {
+    mutateTapsiVerifyToken,
+    isTapsiVerifyTokenSucceed,
+    isTapsiVerifyTokenLoading,
+    tapsiVerifyTokenData,
+  } = useTapsiVerifyToken();
 
   useEffect(() => {
     if (code.length === 5) {
@@ -30,10 +52,25 @@ const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   }, [code]);
 
   useEffect(() => {
-    if(isTapsiVerifyTokenSucceed){
-      setStep(0)
+    if (isTapsiVerifyTokenSucceed ) {
+      saveTokens(tapsiVerifyTokenData.data.token)
+      setStep(0);
     }
-  },[isTapsiVerifyTokenSucceed])
+  }, [isTapsiVerifyTokenSucceed]);
+
+  useEffect(() => {
+    const backAction = () => {
+      setStep(1)
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <Motion.View
@@ -106,7 +143,6 @@ const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
               {code.length > 0 && code.charAt(4)}
             </Text>
           </View>
-
         </View>
       </View>
 
@@ -123,7 +159,15 @@ const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
           code.length < 5 ? "bg-gray-400" : "bg-blue-500"
         )}
       >
-        {isTapsiVerifyTokenLoading ? <ActivityIndicator color={'rgb(59,130,246)'}  size={30} animating={true}  /> : <Text className="font-[IRANSansMedium] text-white">ورود</Text> }
+        {isTapsiVerifyTokenLoading ? (
+          <ActivityIndicator
+            color={"rgb(59,130,246)"}
+            size={30}
+            animating={true}
+          />
+        ) : (
+          <Text className="font-[IRANSansMedium] text-white">ورود</Text>
+        )}
       </Pressable>
     </Motion.View>
   );

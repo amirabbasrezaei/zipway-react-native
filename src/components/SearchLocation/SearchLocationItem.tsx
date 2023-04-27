@@ -1,10 +1,10 @@
 import { View, Text, Keyboard } from "react-native";
 import React from "react";
-import { SearchLocationResultType } from "./SearchLocation";
+
 import { useMapStore } from "../../stores/mapStore";
 
 type Props = {
-  location: SearchLocationResultType;
+  location: any;
   setIsInputActive: (e: any) => void
 };
 
@@ -15,7 +15,7 @@ const SearchLocationItem = ({ location, setIsInputActive }: Props) => {
   const pressHandler = () => {
     setSearchedLocationCoordinate([Number(longitude), Number(latitude)]);
     setIsInputActive(false)
-    Keyboard.dismiss()
+    // Keyboard.dismiss()
   }
   return (
     <View onTouchEnd={pressHandler} className=" border-b border-slate-100 rounded-sm my-1 flex justify-center  text-center">

@@ -26,7 +26,7 @@ export async function getNewPrice(data: any) {
   const newData = await JSON.stringify(data);
   const response = await axios.post(BASE_URL, data, {
     headers: {
-      authorization:  await SecureStore.getItemAsync("snapp-accessToken") ,
+      authorization: await SecureStore.getItemAsync("snapp-accessToken"),
       "content-type": "application/json; charset=utf-8",
       "jaeger-debug-id": "1cb95d90-4a0b-475b-a207-b8353234bb3c",
       locale: "fa-IR",
@@ -79,17 +79,69 @@ export async function verifySnappSmsTokenRequest(body) {
   return response.data;
 }
 
-const data = {
-  access_token:
-    "eyJhbGciOiJSUzUxMiIsImtpZCI6Ino4YTRsNG9PRkVxZ2VoUllEQlpQK2ZwclBuTERMbWFia3NsT3hWVnBMTkUiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOlsicGFzc2VuZ2VyIl0sImVtYWlsIjoiYWJiYXNzeHoyQGdtYWlsLmNvbSIsImV4cCI6MTY3MDkxNDI5NywiaWF0IjoxNjY5NzA0Njk3LCJpc3MiOjEsImp0aSI6IlJYVVVzMit5RWUySC9YbzFDVVlSUy9DTVVIN3lra3BxbTdJRmI0ejVPaFEiLCJzaWQiOiIySUQ4R1hSTkVGcTFRQ0VVMUFJbGZQcmYyUXEiLCJzdWIiOiJnM216MG5uMXB6cjBRbGUifQ.MWaK7jhEo7DKBeMU0GWRxcUQBYTCy7gIWMLT7Jzho_Mi6SSRoVLlKd5l3tJ6Haa0PFG-OhdQO9kK5maTFPvaUPcNpY8dPdz0CmLf62A6RC85XpyZJY_qfjXX6iKco5Ul4qfw2aPHuhikWNAqSroAhNoNNjlaKBvbfm7O62SFVFsdenVYnqiWvCd_bwPWma8Nlqy2gDwPsjAThBRAf2xChOyjUBq-Ni2DndtVQ8_U7-RPx0Sv9plV_3-xD4DlToO4eR1gGrF_KL9uFkQr_8XHnBL__7TS7fkwxMQ9lQPNxcsLXnYNL-Yf35dW5Har3fKCL2vSRoB2f5H0T38GhJUbPsadT3eoKHnbvnNRvEOcilWfbHriL2fpp8uC0E-NLKhAn1E8b7fUMTWgADsgAjTJYRArq_r7PGa-46NMbF1FydP_PniXyn1KIz5-WJ4T6ynSXG4r4xOEBNXBlextCUzo2zLYV9EZA3V_32onlksccAAgHCkEUwyvZQeJ_sg34PcRdXHiykSQR11CSv4Lo9_HXpSyiouawi0WNrS2VBe5QEhhTHv5I7jSQKoWPxjMGibPPOhxbNtp2Rz6QOR3FsBgLyLtLbtyk_qpCHybD8ehU3ZoPeiQyzozRrcWaghel-rLcE9fVPs3skCm0U-lhw_gqWdHjLnLQ9-CUqnogltnjYY",
-  token_type: "Bearer",
-  expires_in: 1209600,
-  refresh_token:
-    "v2.2pIss_u4UQOrMIVCK8RFx5JWOeSWunBSjAG4IT9B3sww6_-tbA_yKNqXgjGxFdqQCv8A9TCACw5IbvbClMFnasSCkRGJ2BjlVwvQ-dR3FUZD2pXKgA==",
-  email: "abbassxz2@gmail.com",
-  fullname: "عباس",
-  is_pending: false,
-  is_new_user: false,
-  is_email_required: false,
-  login_status: 1,
-};
+export async function snappNewRideRequest(data, headers) {
+  const response = await axios.post(
+    "https://api.snapp.site/v2/passenger/ride",
+    data,
+    { headers }
+  );
+
+  console.log(response.data);
+
+  return response.data;
+}
+
+export async function snappCancelRideRequest(headers, rideId) {
+  const response = await axios.patch(
+    `https://api.snapp.site/v2/passenger/ride/${rideId}/cancel/inride`,
+    {},
+    { headers }
+  );
+
+  const sampleRes = {
+    data: {
+      message: "ride cancelled successfully",
+    },
+    status: 200,
+  };
+  return response.data;
+}
+
+export async function snappCancelWaitingRequest(headers, rideId) {
+  const response = await axios.patch(
+    `https://api.snapp.site/v2/passenger/ride/${rideId}/cancel/waiting`,
+    {},
+    { headers }
+  );
+
+  const sampleRes = {
+    data: {
+      message: "ride cancelled successfully",
+    },
+    status: 200,
+  };
+  return response.data;
+}
+
+export async function snappServiceTypesRequest(body, headers) {
+  const response = await axios.post(
+    `https://blackgate.snapp.site/v2/servicetypes`,
+    body,
+    {
+      headers: {
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+        ...headers,
+      },
+    }
+  );
+  return response.data;
+}
+
+export async function snappWaitingGifRequest() {
+  const response = await axios.get(`https://api.snapp.site/v2/passenger/gif`, {
+    headers: {
+      authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+    },
+  });
+  return response.data;
+}
