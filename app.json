@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Zipway",
-    "slug": "zipway",
-    "version": "2.0.0",
+    "slug": "Zipway",
+    "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -14,10 +14,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.amirabbas98.zipway",
+      "bundleIdentifier": "com.zipway.zipway",
       "buildNumber": "2"
     },
     "android": {
@@ -25,9 +27,13 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "permissions": ["SIM_STATE_READY", "ACCESS_FINE_LOCATION"],
+      "permissions": [
+        "SIM_STATE_READY",
+        "ACCESS_FINE_LOCATION"
+      ],
       "package": "com.zipway.zipway",
-      "versionCode": 2
+      "versionCode": 2,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,6 +47,11 @@
         }
       ],
       "./src/plugins/android-manifest.plugin.ts"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "44830603-a0a8-4d67-9c9f-e219a7ac6e7f"
+      }
+    }
   }
 }

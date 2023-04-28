@@ -168,12 +168,12 @@ const SnappPrice = ({navigation}: Props) => {
                   isLoading={userState === "initial" || newSnappPriceLoading}
                   key={service.name}
                   onPress={() => {
-                    setActiveTrip({
-                      provider: "snapp",
-                      accepted: false,
-                      type: service.type,
-                    });
-                    navigation.navigate("RideWaiting");
+                    // setActiveTrip({
+                    //   provider: "snapp",
+                    //   accepted: false,
+                    //   type: service.type,
+                    // });
+                    // navigation.navigate("RideWaiting");
                   }}
                   photoUrl={service.photo_url}
                   price={

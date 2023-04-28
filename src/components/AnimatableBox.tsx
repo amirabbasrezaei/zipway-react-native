@@ -1,7 +1,6 @@
-import { Dimensions, StatusBar } from "react-native";
+import { Dimensions, SafeAreaView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useMapStore } from "../stores/mapStore";
-import { Motion } from "@legendapp/motion";
 import { MotiView } from "moti";
 import SearchLocationInput from "./SearchLocation/SearchLocationInput";
 import SearchResults from "./SearchLocation/SearchResults";
@@ -54,110 +53,112 @@ const AnimatableBox = ({ navigation }: Props) => {
   }, [placeBaseSearchData]);
 
   return (
-    <MotiView
-      transition={{ type: "timing", duration: 300 }}
-      animate={{
-        height: activeTrip?.accepted
-          ? 300
-          : isInputActive ||
-            (routeCoordinate?.destination &&
-              routeCoordinate?.origin &&
-              showNewTrip)
-          ? windowHeight
-          : routeCoordinate?.destination &&
-            routeCoordinate?.origin &&
-            !showNewTrip
-          ? 70
-          : 130,
-        bottom: activeTrip?.accepted
-          ? 0
-          : isInputActive ||
-            (routeCoordinate?.destination &&
-              routeCoordinate?.origin &&
-              showNewTrip)
-          ? 0
-          : 20,
-      }}
-      className="absolute  flex left-0 right-0 z-10 justify-center items-center drop-shadow-lg "
-      style={{ elevation: 3, zIndex: 3 }}
-      children={
-        <MotiView
-          transition={{ type: "timing", duration: 300 }}
-          animate={{
-            width: activeTrip?.accepted
-              ? width
-              : isInputActive ||
-                (routeCoordinate?.destination &&
-                  routeCoordinate?.origin &&
-                  showNewTrip)
-              ? width
-              : routeCoordinate?.destination &&
-                routeCoordinate?.origin &&
-                !showNewTrip
-              ? width - 80
-              : width - 50,
-            borderRadius:
-              isInputActive ||
+    <SafeAreaView>
+      <MotiView
+        transition={{ type: "timing", duration: 300 }}
+        animate={{
+          height: activeTrip?.accepted
+            ? 300
+            : isInputActive ||
               (routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
                 showNewTrip)
-                ? 0
+            ? windowHeight
+            : routeCoordinate?.destination &&
+              routeCoordinate?.origin &&
+              !showNewTrip
+            ? 70
+            : 130,
+          bottom: activeTrip?.accepted
+            ? 0
+            : isInputActive ||
+              (routeCoordinate?.destination &&
+                routeCoordinate?.origin &&
+                showNewTrip)
+            ? 0
+            : 20,
+        }}
+        className="absolute flex left-0 right-0 z-10 justify-center items-center drop-shadow-lg "
+        style={{ elevation: 3, zIndex: 3 }}
+        children={
+          <MotiView
+            transition={{ type: "timing", duration: 300 }}
+            animate={{
+              width: activeTrip?.accepted
+                ? width
+                : isInputActive ||
+                  (routeCoordinate?.destination &&
+                    routeCoordinate?.origin &&
+                    showNewTrip)
+                ? width
                 : routeCoordinate?.destination &&
                   routeCoordinate?.origin &&
                   !showNewTrip
-                ? 30
-                : 24,
-            borderTopLeftRadius: activeTrip?.accepted ? 30 : null,
-            borderTopRightRadius: activeTrip?.accepted ? 30 : null,
-          }}
-          className="bg-white  flex-1 h-full "
-          style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.5,
-            elevation:
-              routeCoordinate?.destination &&
-              routeCoordinate?.origin &&
-              !showNewTrip
-                ? 0
-                : 3,
-            backgroundColor:
-              routeCoordinate?.destination &&
-              routeCoordinate?.origin &&
-              !showNewTrip
-                ? "transparent"
-                : "white",
-          }}
-          children={
-            <>
-              {showNewTrip && !activeTrip?.accepted ? (
-                <NewPrices
-                  navigation={navigation}
-                  setShowNewTrip={setShowNewTrip}
-                />
-              ) : activeTrip?.accepted ? (
-                <NewRide />
-              ) : (
-                <>
-                  <SearchLocationInput
-                    showNewTrip={showNewTrip}
+                ? width - 80
+                : width - 50,
+              borderRadius:
+                isInputActive ||
+                (routeCoordinate?.destination &&
+                  routeCoordinate?.origin &&
+                  showNewTrip)
+                  ? 0
+                  : routeCoordinate?.destination &&
+                    routeCoordinate?.origin &&
+                    !showNewTrip
+                  ? 30
+                  : 24,
+              borderTopLeftRadius: activeTrip?.accepted ? 30 : null,
+              borderTopRightRadius: activeTrip?.accepted ? 30 : null,
+            }}
+            className="bg-white  flex-1 h-full "
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.5,
+              elevation:
+                routeCoordinate?.destination &&
+                routeCoordinate?.origin &&
+                !showNewTrip
+                  ? 0
+                  : 3,
+              backgroundColor:
+                routeCoordinate?.destination &&
+                routeCoordinate?.origin &&
+                !showNewTrip
+                  ? "transparent"
+                  : "white",
+            }}
+            children={
+              <>
+                {showNewTrip && !activeTrip?.accepted ? (
+                  <NewPrices
+                    navigation={navigation}
                     setShowNewTrip={setShowNewTrip}
-                    isInputActive={isInputActive}
-                    setIsInputActive={setIsInputActive}
                   />
-                  {isInputActive ? (
-                    <SearchResults
+                ) : activeTrip?.accepted ? (
+                  <NewRide />
+                ) : (
+                  <>
+                    <SearchLocationInput
+                      showNewTrip={showNewTrip}
+                      setShowNewTrip={setShowNewTrip}
                       isInputActive={isInputActive}
                       setIsInputActive={setIsInputActive}
                     />
-                  ) : null}
-                </>
-              )}
-            </>
-          }
-        />
-      }
-    />
+                    {isInputActive ? (
+                      <SearchResults
+                        isInputActive={isInputActive}
+                        setIsInputActive={setIsInputActive}
+                      />
+                    ) : null}
+                  </>
+                )}
+              </>
+            }
+          />
+        }
+      />
+    </SafeAreaView>
   );
 };
 

@@ -79,6 +79,31 @@ export async function verifySnappSmsTokenRequest(body) {
   return response.data;
 }
 
+
+
+export async function snappServiceTypesRequest(body, headers) {
+  const response = await axios.post(
+    `https://blackgate.snapp.site/v2/servicetypes`,
+    body,
+    {
+      headers: {
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+        ...headers,
+      },
+    }
+  );
+  return response.data;
+}
+
+export async function snappWaitingGifRequest() {
+  const response = await axios.get(`https://api.snapp.site/v2/passenger/gif`, {
+    headers: {
+      authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+    },
+  });
+  return response.data;
+}
+
 export async function snappNewRideRequest(data, headers) {
   const response = await axios.post(
     "https://api.snapp.site/v2/passenger/ride",
@@ -123,25 +148,9 @@ export async function snappCancelWaitingRequest(headers, rideId) {
   return response.data;
 }
 
-export async function snappServiceTypesRequest(body, headers) {
-  const response = await axios.post(
-    `https://blackgate.snapp.site/v2/servicetypes`,
-    body,
-    {
-      headers: {
-        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
-        ...headers,
-      },
-    }
-  );
-  return response.data;
+export async function snappRideEventRequest(){
+  const response = await axios.get(`api.snapp.site/v2/passenger/event`)
+  return response.data
 }
 
-export async function snappWaitingGifRequest() {
-  const response = await axios.get(`https://api.snapp.site/v2/passenger/gif`, {
-    headers: {
-      authorization: await SecureStore.getItemAsync("snapp-accessToken"),
-    },
-  });
-  return response.data;
-}
+

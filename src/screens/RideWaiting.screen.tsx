@@ -1,7 +1,8 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable, Image, BackHandler } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { snappWaitingGifRequest } from "../requests/snappAPIs";
+import { useAppStore } from "../stores/appStore";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -9,12 +10,30 @@ type Props = {
 
 const RideWaiting = ({ navigation }: Props) => {
   const [gif, setGif] = useState();
+  const { activeTrip } = useAppStore();
+
   useEffect(() => {
-    snappWaitingGifRequest()
-      .then((res) => {
-        setGif(res["data"]["waiting_gif"]);
-      })
-      .catch(console.error);
+    if(activeTrip.provider === "snapp"){
+      snappWaitingGifRequest()
+        .then((res) => {
+          setGif(res["data"]["waiting_gif"]);
+        })
+        .catch(console.error);
+
+    }
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
 

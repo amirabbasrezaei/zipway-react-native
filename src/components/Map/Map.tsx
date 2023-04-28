@@ -236,7 +236,7 @@ const Map = ({}: Props) => {
       style={{
         elevation: 1,
         zIndex: 1,
-        height: activeTrip ? height - 280 : height,
+        height: activeTrip?.accepted ? height - 280 : height,
         width,
       }}
       className="flex justify-center items-center "
@@ -247,12 +247,12 @@ const Map = ({}: Props) => {
           onRegionIsChanging={(e) => {
             setCameraLocation(e.geometry.coordinates);
           }}
-          onRegionDidChange={(e) => {
-            // setAddressForLocationInput(
-            //   e.geometry.coordinates,
-            //   coordinateToAddress
-            // );
-          }}
+          // onRegionDidChange={(e) => {
+          //   // setAddressForLocationInput(
+          //   //   e.geometry.coordinates,
+          //   //   coordinateToAddress
+          //   // );
+          // }}
           className={classNames("flex-1")}
           styleJSON={setTrafficLayersVisible(appConfig.mapStyles)}
         >
