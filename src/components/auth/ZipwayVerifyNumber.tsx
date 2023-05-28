@@ -49,7 +49,7 @@ const ZipwayVerifyNumber = ({ navigation }: Props) => {
   useEffect(() => {
     if (zipwayConfigData) {
       setAppConfig(zipwayConfigData)
-      navigation.navigate("MapScreen");
+      // navigation.navigate("MapScreen");
     }
   }, [zipwayConfigData]);
 

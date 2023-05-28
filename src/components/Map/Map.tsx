@@ -80,7 +80,7 @@ const Map = ({}: Props) => {
           userLocation.coords.longitude,
           userLocation.coords.latitude,
         ],
-        zoomLevel: 16,
+
         animationDuration: 500,
         type: "CameraStop",
         padding: {
@@ -156,7 +156,7 @@ const Map = ({}: Props) => {
         camera.current?.setCamera({
           animationMode: "moveTo",
           centerCoordinate: searchedLocationCoordinate,
-          zoomLevel:  16,
+          // zoomLevel:  14,
           animationDuration: 500,
           type: "CameraStop",
           padding: {

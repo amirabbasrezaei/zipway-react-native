@@ -79,8 +79,6 @@ export async function verifySnappSmsTokenRequest(body) {
   return response.data;
 }
 
-
-
 export async function snappServiceTypesRequest(body, headers) {
   const response = await axios.post(
     `https://blackgate.snapp.site/v2/servicetypes`,
@@ -108,7 +106,12 @@ export async function snappNewRideRequest(data, headers) {
   const response = await axios.post(
     "https://api.snapp.site/v2/passenger/ride",
     data,
-    { headers }
+    {
+      headers: {
+        ...headers,
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+      },
+    }
   );
 
   console.log(response.data);
@@ -116,11 +119,16 @@ export async function snappNewRideRequest(data, headers) {
   return response.data;
 }
 
-export async function snappCancelRideRequest(headers, rideId) {
+export async function snappCancelRideRequest(rideId, headers) {
   const response = await axios.patch(
     `https://api.snapp.site/v2/passenger/ride/${rideId}/cancel/inride`,
     {},
-    { headers }
+    {
+      headers: {
+        ...headers,
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+      },
+    }
   );
 
   const sampleRes = {
@@ -132,11 +140,16 @@ export async function snappCancelRideRequest(headers, rideId) {
   return response.data;
 }
 
-export async function snappCancelWaitingRequest(headers, rideId) {
+export async function snappCancelWaitingRequest(rideId,headers) {
   const response = await axios.patch(
     `https://api.snapp.site/v2/passenger/ride/${rideId}/cancel/waiting`,
     {},
-    { headers }
+    {
+      headers: {
+        ...headers,
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+      },
+    }
   );
 
   const sampleRes = {
@@ -148,9 +161,28 @@ export async function snappCancelWaitingRequest(headers, rideId) {
   return response.data;
 }
 
-export async function snappRideEventRequest(){
-  const response = await axios.get(`api.snapp.site/v2/passenger/event`)
-  return response.data
+export async function snappRideEventRequest(headers) {
+  const response = await axios.get(
+    `https://api.snapp.site/v2/passenger/event`,
+    {
+      headers: {
+        ...headers,
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+      },
+    }
+  );
+  return response.data;
 }
 
-
+export async function snappAcknowledgement(body, headers) {
+  const response = await axios.post(
+    `https://ackerman.apps.public.okd4.teh-2.snappcloud.io/v1/acknowledgments`,
+    body,
+    {
+      headers: {
+        ...headers,
+        authorization: await SecureStore.getItemAsync("snapp-accessToken"),
+      },
+    }
+  );
+}

@@ -15,15 +15,18 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import PrivacyPolicy from "./src/screens/PrivacyPolicy.screen";
 import RideWaiting from "./src/screens/RideWaiting.screen";
+import * as Linking from "expo-linking";
+import AccountScreen from "./src/screens/Account/Account.screen";
+import PaymentFailed from "./src/screens/Account/Payment/PaymentFailed";
+import PaymentSuccess from "./src/screens/Account/Payment/PaymentSuccess";
+import Logout from "./src/screens/Account/Logout";
 
 const queryClient = new QueryClient();
 
 export const RootStack = createNativeStackNavigator();
-
 (async () => {
   await SplashScreen.preventAutoHideAsync();
 })();
-
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,6 +34,7 @@ export default function App() {
     IRANSansLight: require("./assets/MobileFonts/IRANSansMobile(FaNum)_Light.ttf"),
     IRANSansUltraLight: require("./assets/MobileFonts/IRANSansMobile(FaNum)_UltraLight.ttf"),
     IRANSansBold: require("./assets/MobileFonts/IRANSansMobile(FaNum)_Bold.ttf"),
+    IRANSans: require("./assets/MobileFonts/IRANSansMobile(FaNum).ttf"),
     BlinkerBold: require("./assets/MobileFonts/Blinker-Bold.ttf"),
     mplusround: require("./assets/MobileFonts/mplusround.ttf"),
     mplusroundBold: require("./assets/MobileFonts/mplusround-bold.ttf"),
@@ -39,6 +43,8 @@ export default function App() {
   const { appConfig } = useZipwayConfigStore();
   const { setMaximAuthKey, setPhoneNumber, setSnappAuthKey, setTapsiAuthKey } =
     useAuthenticateStore();
+
+    console.log(appConfig)
 
   /// setting user information in global state(zustand)
   useEffect(() => {
@@ -73,17 +79,28 @@ export default function App() {
     },
   };
 
+  const config = {
+    screens: {
+      Account: "account",
+    },
+  };
+  const linking = {
+    prefixes: [Linking.createURL("/"), "https://zipway.ir"],
+    config,
+  };
+
   return (
     <TRPCProvider queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <FocusComponentProvider>
           {fontsLoaded ? (
             <NavigationContainer
+              linking={linking}
               theme={{
                 ...DefaultTheme,
                 colors: {
                   ...DefaultTheme.colors,
-                  background: "transparent",
+                  background: "white",
                 },
               }}
             >
@@ -91,29 +108,83 @@ export default function App() {
                 screenOptions={{ animation: "slide_from_right" }}
                 initialRouteName="AuthScreen"
               >
-                <RootStack.Screen
-                  name="MapScreen"
-                  component={MapScreen}
-                  options={{ title: "map", headerShown: false, animation:"slide_from_bottom" }}
-                />
-                <RootStack.Screen
-                  name="RideWaiting"
-                  component={RideWaiting}
-                  options={{ title: "map", headerShown: false, animation:"flip" }}
-                />
-                <RootStack.Screen
-                  name="PrivacyPolicy"
-                  component={PrivacyPolicy}
-                  options={{ title: "PrivacyPolicy", headerShown: false, animation:"slide_from_right" }}
-                />
-                {/* <RootStack.Screen name="testLogin" component={TestAPIs} /> */}
-                {!appConfig ? (
+           
+      
+                  <RootStack.Screen
+                      name="MapScreen"
+                      component={MapScreen}
+                      options={{
+                        title: "map",
+                        headerShown: false,
+                        animation: "fade_from_bottom",
+                      }}
+                    />
+                  <RootStack.Screen
+                      name="Account"
+                      component={AccountScreen}
+                      options={{
+                        title: "حساب کاربری",
+                        headerShown: false,
+                        animation: "slide_from_left",
+                      }}
+                    />
+                    
+                    <RootStack.Screen
+                      name="RideWaiting"
+                      component={RideWaiting}
+                      options={{
+                        title: "map",
+                        headerShown: false,
+                        animation: "flip",
+                      }}
+                    />
+                    
+                    <RootStack.Screen
+                      name="Logout"
+                      component={Logout}
+                      options={{
+                        title: "خروج از حساب",
+                        headerShown: false,
+                        animation: "fade_from_bottom",
+                      }}
+                    />
+                    <RootStack.Screen
+                      name="PaymentFailed"
+                      component={PaymentFailed}
+                      options={{
+                        title: "تراکنش ناموفق",
+                        headerShown: false,
+                        animation: "fade",
+                      }}
+                    />
+                    <RootStack.Screen
+                      name="PaymentSuccess"
+                      component={PaymentSuccess}
+                      options={{
+                        title: "تراکنش موفق",
+                        headerShown: false,
+                        animation: "fade",
+                      }}
+                    />
+                    <RootStack.Screen
+                      name="PrivacyPolicy"
+                      component={PrivacyPolicy}
+                      options={{
+                        title: "PrivacyPolicy",
+                        headerShown: false,
+                        animation: "slide_from_right",
+                      }}
+                    />
+                 
+          
                   <RootStack.Screen
                     name="AuthScreen"
                     component={AuthenticateScreen}
                     options={{ title: "hi", headerShown: false }}
                   />
-                ) : null}
+            
+
+                {/* <RootStack.Screen name="testLogin" component={TestAPIs} /> */}
               </RootStack.Navigator>
             </NavigationContainer>
           ) : null}

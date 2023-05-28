@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "Zipway",
-    "slug": "Zipway",
-    "version": "2.0.1",
+    "name": "ZipwayDev",
+    "slug": "ZipwayDev",
+    "scheme": "zipway",
+    "version": "2.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.zipway.zipway",
-      "buildNumber": "2"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,9 +32,24 @@
         "SIM_STATE_READY",
         "ACCESS_FINE_LOCATION"
       ],
-      "package": "com.zipway.zipway",
-      "versionCode": 2,
-      "softwareKeyboardLayoutMode": "pan"
+      "package": "com.zipway.zipwaydev",
+      "versionCode": 5,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.zipway.ir",
+              "pathPrefix": "/records"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -30,7 +30,7 @@ const SearchResults = ({ isInputActive, setIsInputActive }: Props) => {
 
   return (
     <ScrollView
-      className="mt-[120] overflow-scroll px-3"
+      className="mt-[120] overflow-scroll px-3 "
       style={{ elevation: 4 }}
     >
       {searchLocationResults.length

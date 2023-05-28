@@ -1,14 +1,17 @@
 import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import { useAppStore } from "../../stores/appStore";
-import SnappNewRide from "./SnappNewRide";
-import TapsiNewRide from "./TapsiNewRide";
-import MaximNewRide from "./MaximNewRide";
+import SnappNewRide from "./SnappRide";
+import TapsiNewRide from "./TapsiRide";
+import MaximNewRide from "./MaximRide";
 import { BackHandler } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-type Props = {};
+type Props = {
+  navigation: NativeStackNavigationProp<any, any>;
+};
 
-const NewRide = ({}: Props) => {
+const NewRide = ({ navigation }: Props) => {
   const { activeTrip, setActiveTrip } = useAppStore();
   useEffect(() => {
     const backAction = () => {
@@ -26,11 +29,11 @@ const NewRide = ({}: Props) => {
 
   return (
     <View className="p-4 flex-1 ">
-      {activeTrip === "snapp" ? (
-        <SnappNewRide />
-      ) : activeTrip === "tapsi" ? (
+      {activeTrip.provider === "snapp" ? (
+        <SnappNewRide navigation={navigation} />
+      ) : activeTrip.provider === "tapsi" ? (
         <TapsiNewRide />
-      ) : activeTrip === "maxim" ? (
+      ) : activeTrip.provider === "maxim" ? (
         <MaximNewRide />
       ) : null}
     </View>

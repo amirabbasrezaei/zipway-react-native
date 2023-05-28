@@ -8,11 +8,13 @@ import ZipwaySignIn from "../components/auth/ZipwaySignIn";
 import ZipwayVerifyNumber from "../components/auth/ZipwayVerifyNumber";
 import { useZipwayConfigStore } from "../stores/zipwayConfigStore";
 import ZipwayNewUser from "../components/auth/ZipwayNewUser";
-import {  useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { useZipwayConfig } from "../ReactQuery/Mutations";
 import { trpc } from "../../utils/trpc";
 import ZipwayAuthScreen from "./ZipwayAuth.screen";
-import * as SplashScreen from "expo-splash-screen"
+import * as SplashScreen from "expo-splash-screen";
+import { useSnappConfigMutation } from "../ReactQuery/SnappRequestHooks";
+import {useQueryClient} from "@tanstack/react-query"
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -20,36 +22,61 @@ type Props = {
 
 const AuthStack = createNativeStackNavigator();
 const AuthenticateScreen = ({ navigation }: Props) => {
+  const client = useQueryClient
   const [appState, setAppState] = useState("LAUNCH");
+  const params =
+    navigation?.getState()?.routes[navigation.getState().index]?.params;
   const isFocused = useIsFocused();
   const { setAppConfig, appConfig } = useZipwayConfigStore();
   const { mutate: mutateAppLog } = trpc.app.log.useMutation();
+  const { snappConfigMutate, snappConfigData, isSnappConfigSuccess } =
+    useSnappConfigMutation();
+
   const {
     zipwayConfigError,
     zipwayConfigRefetch,
     zipwayConfigData,
-    isZipwayConfigSuccess,
     zipwayConfigFailureReason,
+    isZipwayConfigStale,
   } = useZipwayConfig();
 
+  isFocused && isZipwayConfigStale && zipwayConfigRefetch();
 
-  isFocused && zipwayConfigRefetch();
+  useEffect(() => {
+    if (isZipwayConfigStale) {
+
+    }
+  }, [isZipwayConfigStale]);
 
   useEffect(() => {
     (async () => {
-      await SplashScreen.hideAsync()
-    })()
-    if (isZipwayConfigSuccess) {
+      await SplashScreen.hideAsync();
+    })();
+    if (zipwayConfigData?.userInfo) {
+      snappConfigMutate();
       setAppConfig(zipwayConfigData);
       setAppState("AUTHENTICATED");
-      navigation.navigate("MapScreen");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MapScreen" }],
+      });
     }
   }, [zipwayConfigData]);
 
+  // useEffect(() => {
+  //   if (snappConfigData) {
+  //     console.log(snappConfigData);
+  //   }
+  // }, [isSnappConfigSuccess]);
+
+  // console.log("zipwayConfigData", zipwayConfigData);
+  console.log("isZipwayConfigStale", isZipwayConfigStale);
+  // console.log("isZipwayConfigPreviousData", isZipwayConfigPreviousData);
+
   useEffect(() => {
     (async () => {
-      await SplashScreen.hideAsync()
-    })()
+      await SplashScreen.hideAsync();
+    })();
     if (zipwayConfigFailureReason?.data["httpStatus"] === 401) {
       setAppState("UNAUTHENTICATED");
       mutateAppLog({
@@ -83,7 +110,11 @@ const AuthenticateScreen = ({ navigation }: Props) => {
           />
           <AuthStack.Screen name="newUser" component={ZipwayNewUser} />
         </AuthStack.Navigator>
-      ) : null}
+      ) : (
+        <View>
+          <Text>fdsfg</Text>
+        </View>
+      )}
     </>
   );
 };

@@ -8,7 +8,6 @@ import { FocusContext, UseFocusContextArgs } from "../../FocusComponent";
 import { useAuthenticateStore } from "../../../stores/authenticateStore";
 import { useAppStore } from "../../../stores/appStore";
 import {
-  useNewSnappRide,
   useSnappNewPrice,
   useSnappServiceTypes,
 } from "../../../ReactQuery/SnappRequestHooks";
@@ -36,23 +35,9 @@ const SnappPrice = ({navigation}: Props) => {
   const [userState, setUserState] = useState("initial");
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { snappAuthKey } = useAuthenticateStore();
-  const { mutateSnappNewRide } = useNewSnappRide();
   const { routeCoordinate } = useMapStore();
 
-  const body = {
-    destination_details: "بزرگراه یادگار امام، چهارم، دوم جنوبی",
-    destination_lat: routeCoordinate.destination[1],
-    destination_lng: routeCoordinate.destination[0],
-    destination_place_id: 0,
-    intercity_tcv: 0,
-    is_for_friend: false,
-    services: false,
-    is_paid_by_recipient: false,
-    round_trip: false,
-    origin_lat: routeCoordinate.origin[1],
-    origin_lng: routeCoordinate.origin[0],
-    service_type: 1,
-  };
+
 
   const snappServiceTypesBody = {
     points: [
@@ -164,18 +149,12 @@ const SnappPrice = ({navigation}: Props) => {
             {services?.length &&
               services.map((service) => (
                 <SnappPriceItem
-                  name={service.name}
+                  name={service?.name}
                   isLoading={userState === "initial" || newSnappPriceLoading}
-                  key={service.name}
-                  onPress={() => {
-                    // setActiveTrip({
-                    //   provider: "snapp",
-                    //   accepted: false,
-                    //   type: service.type,
-                    // });
-                    // navigation.navigate("RideWaiting");
-                  }}
-                  photoUrl={service.photo_url}
+                  serviceType={service?.type}
+                  key={service?.name}
+                  navigation={navigation}
+                  photoUrl={service?.photo_url}
                   price={
                     newSnappPriceData?.data.prices?.filter(
                       (item) => item.type === service.type

@@ -1,12 +1,17 @@
 import create from "zustand";
 
-interface AppConfig{
-    mapStyles?: any | null;
-    banner?: any | null;
-}
+// interface AppConfig{
+//     mapStyles?: any | null;
+//     banner?: any | null;
+//     userInfo?: {
+//     name: string;
+//     credit: number;
+//     phoneNumber: string
+//   } 
+// }
 
 interface ZipwayConfigType {
-  appConfig: AppConfig | null;
+  appConfig:any;
   setAppConfig: (appConfig: ZipwayConfigType["appConfig"]) => void;
 }
 

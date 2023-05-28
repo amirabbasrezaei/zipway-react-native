@@ -35,11 +35,12 @@ export function useZipwayConfig() {
     error: zipwayConfigError,
     isError: isZipwayConfigError,
     failureReason: zipwayConfigFailureReason,
-    refetch: zipwayConfigRefetch
+    refetch: zipwayConfigRefetch,
+    isLoading: isZipwayConfigLoading,
+    isStale: isZipwayConfigStale
   } = trpc.app.zipwayConfig.useQuery({
     deviceModel: Device.modelName,
     deviceId: Application.androidId,
-    phoneNumber,
     appVersion: Application.nativeApplicationVersion,
     deviceManufacturer: Device.manufacturer,
   });
@@ -64,6 +65,10 @@ export function useZipwayConfig() {
     zipwayConfigError,
     zipwayConfigFailureReason,
     isZipwayConfigError,
-    zipwayConfigRefetch
+    zipwayConfigRefetch,
+    isZipwayConfigLoading,
+    isZipwayConfigStale
   };
 }
+
+

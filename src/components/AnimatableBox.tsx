@@ -7,7 +7,7 @@ import SearchResults from "./SearchLocation/SearchResults";
 import NewPrices from "./NewPrice/NewPrices";
 import { trpc } from "../../utils/trpc";
 import { useAppStore } from "../stores/appStore";
-import NewRide from "./NewRide/NewRide";
+import NewRide from "./NewRide/Ride";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type Props = {
@@ -53,7 +53,7 @@ const AnimatableBox = ({ navigation }: Props) => {
   }, [placeBaseSearchData]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="flex-1 h-full w-full">
       <MotiView
         transition={{ type: "timing", duration: 300 }}
         animate={{
@@ -100,7 +100,7 @@ const AnimatableBox = ({ navigation }: Props) => {
                 isInputActive ||
                 (routeCoordinate?.destination &&
                   routeCoordinate?.origin &&
-                  showNewTrip)
+                  showNewTrip) || activeTrip?.accepted
                   ? 0
                   : routeCoordinate?.destination &&
                     routeCoordinate?.origin &&
@@ -136,7 +136,7 @@ const AnimatableBox = ({ navigation }: Props) => {
                     setShowNewTrip={setShowNewTrip}
                   />
                 ) : activeTrip?.accepted ? (
-                  <NewRide />
+                  <NewRide navigation={navigation} />
                 ) : (
                   <>
                     <SearchLocationInput
@@ -158,7 +158,7 @@ const AnimatableBox = ({ navigation }: Props) => {
           />
         }
       />
-    </SafeAreaView>
+     </SafeAreaView> 
   );
 };
 
