@@ -10,14 +10,14 @@ type DriverType = {
   cellphone: string;
   driver_name: string;
   image_url: string;
-  plate_number_url: string;
+  plate_number_url?: string;
   vehicle_color: string;
   vehicle_model: string;
   driver_location_info: {
     lat: number;
     lng: number;
   };
-  
+ 
 };
 
 interface AppStoreType {
@@ -26,8 +26,12 @@ interface AppStoreType {
     type?: string;
     accepted?: boolean;
     tripId?: string;
+    tapsiRideToken?: string;
     driverInfo?: DriverType;
-    price?: number
+    price?: number;
+    serviceName?: string;
+    canRequest?: boolean;
+    categoryType?: string
   } | null;
   setActiveTrip: (input: AppStoreType["activeTrip"]) => void;
 }

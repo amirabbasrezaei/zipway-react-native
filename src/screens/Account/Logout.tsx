@@ -4,16 +4,30 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { trpc } from "../../../utils/trpc";
 import { useZipwayConfigStore } from "../../stores/zipwayConfigStore";
 import classNames from "classnames";
-import {Restart} from 'fiction-expo-restart';
+import { Restart } from "fiction-expo-restart";
+import * as SecureStore from "expo-secure-store";
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
 };
 
 const Logout = ({ navigation }: Props) => {
   const { mutate, data, isLoading } = trpc.user.logout.useMutation();
+  const {appConfig} = useZipwayConfigStore()
   useEffect(() => {
     if (data?.isUserLoggedout) {
-      Restart()
+      (async () => {
+        await SecureStore.setItemAsync("maximAuthKey", null);
+
+  
+        await SecureStore.setItemAsync("phoneNumber", null);
+  
+  
+        await SecureStore.setItemAsync("snapp-accessToken", null);
+  
+        await SecureStore.setItemAsync("tapsi-accessToken", null);
+
+      })();
+      Restart();
     }
   }, [data]);
   return (
@@ -23,7 +37,7 @@ const Logout = ({ navigation }: Props) => {
         source={require("../../../assets/exit_account.png")}
       />
       <Text className="font-[IRANSansMedium] text-gray-600">
-        آیا برای خروج از حساب کاربری خود مطمئنید؟
+        {appConfig.appInfo.logoutAppText}
       </Text>
       <View className="w-full flex flex-row mt-20 ">
         <Pressable

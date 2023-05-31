@@ -15,6 +15,7 @@ import { useZipwayConfigStore } from "../stores/zipwayConfigStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as NavigationBar from "expo-navigation-bar";
 import { WalletIcon } from "../components/Svgs";
+import splitNumber from "../../utils/splitNumber";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -43,7 +44,7 @@ const MapScreen = ({ navigation }: Props) => {
             >
               <View>
                 <Text className="font-[IRANSansLight]">
-                  ‌{appConfig.userInfo.credit} تومان‌
+                  ‌{splitNumber(String(appConfig.userInfo.credit))} تومان‌
                 </Text>
               </View>
               <View>

@@ -14,12 +14,13 @@ import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import PrivacyPolicy from "./src/screens/PrivacyPolicy.screen";
-import RideWaiting from "./src/screens/RideWaiting.screen";
+import SnappRideWaiting from "./src/screens/SnappRideWaiting";
 import * as Linking from "expo-linking";
 import AccountScreen from "./src/screens/Account/Account.screen";
 import PaymentFailed from "./src/screens/Account/Payment/PaymentFailed";
 import PaymentSuccess from "./src/screens/Account/Payment/PaymentSuccess";
 import Logout from "./src/screens/Account/Logout";
+import TapsiRideWaiting from "./src/screens/TapsiRideWaiting.screen";
 
 const queryClient = new QueryClient();
 
@@ -44,7 +45,7 @@ export default function App() {
   const { setMaximAuthKey, setPhoneNumber, setSnappAuthKey, setTapsiAuthKey } =
     useAuthenticateStore();
 
-    console.log(appConfig)
+
 
   /// setting user information in global state(zustand)
   useEffect(() => {
@@ -108,8 +109,9 @@ export default function App() {
                 screenOptions={{ animation: "slide_from_right" }}
                 initialRouteName="AuthScreen"
               >
-           
-      
+                {appConfig ? (
+                  <>
+                  
                   <RootStack.Screen
                       name="MapScreen"
                       component={MapScreen}
@@ -125,15 +127,24 @@ export default function App() {
                       options={{
                         title: "حساب کاربری",
                         headerShown: false,
-                        animation: "slide_from_left",
+                        animation: "flip",
                       }}
                     />
                     
                     <RootStack.Screen
-                      name="RideWaiting"
-                      component={RideWaiting}
+                      name="SnappRideWaiting"
+                      component={SnappRideWaiting}
                       options={{
-                        title: "map",
+                        title: "SnappRideWaiting",
+                        headerShown: false,
+                        animation: "flip",
+                      }}
+                    />
+                    <RootStack.Screen
+                      name="TapsiRideWaiting"
+                      component={TapsiRideWaiting}
+                      options={{
+                        title: "TapsiRideWaiting",
                         headerShown: false,
                         animation: "flip",
                       }}
@@ -172,17 +183,17 @@ export default function App() {
                       options={{
                         title: "PrivacyPolicy",
                         headerShown: false,
-                        animation: "slide_from_right",
+                        animation: "flip",
                       }}
                     />
-                 
-          
+                  </>
+                ) : (
                   <RootStack.Screen
                     name="AuthScreen"
                     component={AuthenticateScreen}
-                    options={{ title: "hi", headerShown: false }}
+                    options={{ title: "hi", headerShown: false, animation: "flip", }}
                   />
-            
+                )}
 
                 {/* <RootStack.Screen name="testLogin" component={TestAPIs} /> */}
               </RootStack.Navigator>

@@ -20,7 +20,7 @@ import {
 import { useZipwayConfigStore } from "../../stores/zipwayConfigStore";
 import { trpc } from "../../../utils/trpc";
 import { useAppStore } from "../../stores/appStore";
-import {  MinusIcon, PlusIcon, WalletIcon } from "../Svgs";
+import { MinusIcon, PlusIcon, WalletIcon } from "../Svgs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import classNames from "classnames";
 
@@ -45,11 +45,23 @@ const transition: MotiTransitionProp<
 };
 
 const Account = ({ navigation }: Props) => {
-  const [priceAmount, setPriceAmount] = useState<string>("20000");
+  const { appConfig } = useZipwayConfigStore();
+  const [priceAmount, setPriceAmount] = useState<string>(
+    String(appConfig.appInfo.minCreatePayment)
+  );
+  const isPriceAmountTrue = (price: number) => {
+    if (
+      price < appConfig.appInfo.minCreatePayment ||
+      price > appConfig.appInfo.maxCreatePayment
+    ) {
+      return false;
+    }
+    return true;
+  };
   const [accountState, setAccountState] = useState<AccountState>(
     AccountState.ACCOUNT_INFO
   );
-  const { appConfig } = useZipwayConfigStore();
+
   const {
     data: createPaymentData,
     mutate: mutateCreatePayment,
@@ -59,16 +71,21 @@ const Account = ({ navigation }: Props) => {
 
   useEffect(() => {
     if (createPaymentData?.pay_link) {
-      console.log(createPaymentData);
       Linking.openURL(createPaymentData?.pay_link);
     }
   }, [isCreatePaymentSuccess]);
 
   useEffect(() => {
     if (accountState === AccountState.ACCOUNT_INFO) {
-      setPriceAmount("20000");
+      setPriceAmount(String(appConfig.appInfo.minCreatePayment));
     }
   }, [accountState]);
+
+  useEffect(() => {
+    if (Number(priceAmount) < 0) {
+      return setPriceAmount("0");
+    }
+  }, [priceAmount]);
 
   return (
     <MotiView
@@ -81,7 +98,7 @@ const Account = ({ navigation }: Props) => {
       style={{ height: height - 120 }}
       className={classNames("items-center justify-between  px-7 w-full ")}
     >
-      <View className=" h-fit w-full gap-y-10">
+      <View className=" h-fit w-full gap-y-10 justify-center items-center">
         <MotiView
           animate={{
             scale: accountState === AccountState.ACCOUNT_INFO ? 1 : 0,
@@ -91,8 +108,7 @@ const Account = ({ navigation }: Props) => {
           className="items-center justify-center"
         >
           <MotiText className="font-[IRANSansLight] text-[20px] text-black">
-            {/* {appConfig.userInfo.name} */}
-            امیرعباس رضائی
+            {appConfig.userInfo.name}
           </MotiText>
           <Text className="font-[IRANSansLight] text-[14px] text-black">
             {appConfig.userInfo.phoneNumber}
@@ -105,10 +121,10 @@ const Account = ({ navigation }: Props) => {
               accountState === AccountState.ACCOUNT_INFO
                 ? "space-between"
                 : null,
-            translateX: accountState === AccountState.PAYMENT ? -130 : 0,
+            width: accountState === AccountState.PAYMENT ? width : width - 60,
           }}
           transition={transition}
-          className="w-full h-30  rounded-lg flex flex-row  items-center justify-between"
+          className="w-fit h-30  rounded-lg flex flex-row  items-center justify-between"
         >
           <MotiView
             onTouchStart={() => {
@@ -117,24 +133,26 @@ const Account = ({ navigation }: Props) => {
             animate={{
               scale: accountState === AccountState.ACCOUNT_INFO ? 1 : 0,
               opacity: accountState === AccountState.ACCOUNT_INFO ? 1 : 0,
+              
             }}
             transition={transition}
-            className="bg-[#F8F8F8] px-4 py-2 rounded-[13px]"
+            className="bg-[#F8F8F8]  px-4 py-2 rounded-[13px]"
           >
-            <MotiText className="font-[IRANSansBold] text-[#00D42F]">
+            <MotiText className="font-[IRANSansBold]  text-[#28ba48]">
               افزایش اعتبار
             </MotiText>
           </MotiView>
-
           <MotiView
             animate={{
               scale: accountState === AccountState.ACCOUNT_INFO ? 1 : 1.2,
+              right:  accountState === AccountState.ACCOUNT_INFO ? 0 : width/3
             }}
-            className="w-fit justify-center items-center flex flex-row gap-x-3"
+            transition={transition}
+            className="w-fit justify-center absolute items-center flex flex-row gap-x-3"
           >
             <MotiView>
               <Text className="font-[IRANSansMedium] text-[17px] text-[#464646]">
-                ‌{appConfig.userInfo.credit} تومان‌
+                ‌{splitNumber(String(appConfig.userInfo.credit))} تومان‌
               </Text>
             </MotiView>
             <MotiView className="w-7 h-7">
@@ -142,6 +160,7 @@ const Account = ({ navigation }: Props) => {
             </MotiView>
           </MotiView>
         </MotiView>
+
         <MotiView
           animate={{
             scale: accountState === AccountState.PAYMENT ? 1 : 0,
@@ -155,7 +174,7 @@ const Account = ({ navigation }: Props) => {
             style={{ direction: "rtl" }}
             className="font-[IRANSans]   text-[#6B6B6B]"
           >
-            حداقل مبلغ مورد نیاز برای افزایش اعتبار حساب ۲۰۰۰۰ تومان می باشد.
+            {appConfig.appInfo.createPaymentText}
           </MotiText>
         </MotiView>
 
@@ -168,18 +187,37 @@ const Account = ({ navigation }: Props) => {
           transition={{ type: "timing", duration: 300 }}
         >
           <MotiView className="flex mb-10 flex-row items-center justify-between  h-14 w-5/6">
-            <View
-              onTouchStart={() =>
-                setPriceAmount((e) => String(Number(e) - 10000))
+            <Pressable
+              disabled={
+                isCreatePaymentLoading ||
+                Number(priceAmount) <= appConfig.appInfo.minCreatePayment
               }
+              hitSlop={15}
+              onPress={() => setPriceAmount((e) => String(Number(e) - 10000))}
             >
-              <MinusIcon classStyle="w-5 h-5 fill-[#7E7E7E]" />
-            </View>
+              <MinusIcon
+                classStyle={classNames(
+                  "w-5 h-5 ",
+                  Number(priceAmount) > appConfig.appInfo.minCreatePayment
+                    ? "fill-[#7E7E7E]"
+                    : "fill-gray-200"
+                )}
+              />
+            </Pressable>
             <View className="w-2/3 relative">
               <TextInput
-                onChangeText={(e) => setPriceAmount(e)}
+                onChangeText={(e) => {
+                  setPriceAmount(e.split(",").join(""));
+                }}
                 value={splitNumber(String(priceAmount))}
-                keyboardType="numeric"
+                returnKeyType="go"
+                onSubmitEditing={() =>
+                  mutateCreatePayment({
+                    amount: Number(priceAmount),
+                  })
+                }
+                keyboardType="number-pad"
+                editable={!isCreatePaymentLoading}
                 className="h-full font-[IRANSansBold] w-full text-[20px] border-2 text-center border-[#EFEFEF]  rounded-[23px] px-6"
               />
               <View className="absolute left-5 h-full items-center justify-center">
@@ -188,22 +226,22 @@ const Account = ({ navigation }: Props) => {
                 </Text>
               </View>
             </View>
-            <View
-              onTouchStart={() =>
-                setPriceAmount((e) => String(Number(e) + 10000))
-              }
+            <Pressable
+              disabled={isCreatePaymentLoading}
+              hitSlop={15}
+              onPress={() => setPriceAmount((e) => String(Number(e) + 10000))}
             >
               <PlusIcon classStyle="w-5 h-5 fill-[#7E7E7E]" />
-            </View>
+            </Pressable>
           </MotiView>
           <MotiView className="flex flex-row w-full justify-between ">
             <MotiView
-              animate={{
-                width: isCreatePaymentLoading ? "100%" : "70%",
-              }}
               className={classNames(
-                "bg-[rgb(205,205,205)] h-12 items-center justify-center rounded-[17px]",
-                isCreatePaymentLoading ? "bg-[#cdcdcd]" : "bg-[#3B82F6]"
+                "bg-[rgb(205,205,205)] w-2/3 h-12 items-center justify-center rounded-[17px]",
+                isCreatePaymentLoading ||
+                  !isPriceAmountTrue(Number(priceAmount))
+                  ? "bg-[#cdcdcd]"
+                  : "bg-[#3B82F6]"
               )}
               transition={transition}
             >
@@ -213,7 +251,10 @@ const Account = ({ navigation }: Props) => {
                     amount: Number(priceAmount),
                   })
                 }
-                disabled={isCreatePaymentLoading}
+                disabled={
+                  isCreatePaymentLoading ||
+                  !isPriceAmountTrue(Number(priceAmount))
+                }
                 className=" flex-1 w-full items-center justify-center"
               >
                 {isCreatePaymentLoading ? (
@@ -224,16 +265,14 @@ const Account = ({ navigation }: Props) => {
               </Pressable>
             </MotiView>
             <MotiView
-              className=" h-12 w-[30%] items-center justify-center"
-              animate={{
-                scale: isCreatePaymentLoading ? 0 : 1,
-                opacity: isCreatePaymentLoading ? 0 : 1,
-              }}
+              className=" h-12  w-1/3 items-center justify-center"
               transition={transition}
             >
               <Pressable
+                disabled={isCreatePaymentLoading}
                 onPress={() => setAccountState(AccountState.ACCOUNT_INFO)}
                 className=" w-full items-center justify-center"
+                hitSlop={10}
               >
                 <Text className="text-[#8C8C8C] font-[IRANSansMedium]">
                   انصراف

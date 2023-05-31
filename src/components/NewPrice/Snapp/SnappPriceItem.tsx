@@ -1,4 +1,4 @@
-import { Text, Dimensions, Image } from "react-native";
+import { Text, Dimensions, Image, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import { MotiView, MotiText } from "moti";
 
@@ -9,6 +9,7 @@ import { useMapStore } from "../../../stores/mapStore";
 import { useNewSnappRide } from "../../../ReactQuery/SnappRequestHooks";
 import { useAppStore } from "../../../stores/appStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import classNames from "classnames";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -37,13 +38,12 @@ const SnappPriceItem = ({
   navigation,
 }: Props) => {
   const { routeCoordinate } = useMapStore();
-  const { setActiveTrip } = useAppStore();
+  const { setActiveTrip, activeTrip } = useAppStore();
 
   const { mutateSnappNewRide, snappNewRideData, isSnappNewRideSuccess } =
     useNewSnappRide();
 
   useEffect(() => {
-    console.log(snappNewRideData);
     if (isSnappNewRideSuccess) {
       setActiveTrip({
         tripId: snappNewRideData["data"]["ride_id"],
@@ -53,9 +53,15 @@ const SnappPriceItem = ({
         accepted: false,
         type: serviceType,
       });
-      navigation.navigate("RideWaiting");
+      navigation.navigate("SnappRideWaiting");
     }
   }, [isSnappNewRideSuccess]);
+
+  // useEffect(() => {
+  //   if (activeTrip?.canRequest && activeTrip.serviceName == name) {
+  //     mutateSnappNewRide(NewRideBody);
+  //   }
+  // }, [activeTrip]);
 
   const NewRideBody = {
     destination_details: routeCoordinate.destinationTitle,
@@ -73,56 +79,53 @@ const SnappPriceItem = ({
   };
 
   return (
-    <MotiView
-      onTouchStart={() => {
-        mutateSnappNewRide(NewRideBody);
-      }}
-      className="h-[70] w-full bg-white rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex"
-    >
-      {isLoading || (!price && !minMaxPrice?.min) ? (
-        <SkeletonPlaceholder borderRadius={4} angle={90}>
-          <SkeletonPlaceholder.Item
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="space-between"
-            width={Dimensions.get("screen").width - 65}
-            height={70}
-            backgroundColor={"#000"}
+    <Pressable onPress={() => {setActiveTrip({serviceName: name, type: serviceType})}}>
+      <MotiView className={classNames("h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex", activeTrip?.type == serviceType ? "bg-blue-200" : "bg-white")}>
+        {isLoading || (!price && !minMaxPrice?.min) ? (
+          <SkeletonPlaceholder borderRadius={4} angle={90}>
+            <SkeletonPlaceholder.Item
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              width={Dimensions.get("screen").width - 65}
+              height={70}
+              backgroundColor={"#000"}
+            >
+              <SkeletonPlaceholder.Item width={110} height={30} />
+              <SkeletonPlaceholder.Item width={110} height={30} />
+            </SkeletonPlaceholder.Item>
+          </SkeletonPlaceholder>
+        ) : (
+          <MotiView
+            from={{ translateY: 10, opacity: 0 }}
+            animate={{ translateY: 0, opacity: 1 }}
+            transition={{ type: "timing", duration: 500 }}
+            className="flex flex-row flex-1  justify-between"
           >
-            <SkeletonPlaceholder.Item width={110} height={30} />
-            <SkeletonPlaceholder.Item width={110} height={30} />
-          </SkeletonPlaceholder.Item>
-        </SkeletonPlaceholder>
-      ) : (
-        <MotiView
-          from={{ translateY: 10, opacity: 0 }}
-          animate={{ translateY: 0, opacity: 1 }}
-          transition={{ type: "timing", duration: 500 }}
-          className="flex flex-row flex-1  justify-between"
-        >
-          <MotiView className="flex flex-row-reverse gap-1 items-center">
-            <Text className="font-[IRANSansMedium] text-[14px] text-gray-700">
-              {minMaxPrice?.min
-                ? `${splitNumber(String(minMaxPrice.min))} - ${splitNumber(
-                    String(minMaxPrice.max)
-                  )}`
-                : splitNumber(String(price))}
-            </Text>
-            <Text className="font-[IRANSansMedium] text-[14px] text-gray-700">
-              تومان
-            </Text>
+            <MotiView className="flex flex-row-reverse gap-1 items-center">
+              <Text className="font-[IRANSansMedium] text-[14px] text-gray-700">
+                {minMaxPrice?.min
+                  ? `${splitNumber(String(minMaxPrice.min))} - ${splitNumber(
+                      String(minMaxPrice.max)
+                    )}`
+                  : splitNumber(String(price))}
+              </Text>
+              <Text className="font-[IRANSansMedium] text-[14px] text-gray-700">
+                تومان
+              </Text>
+            </MotiView>
+            <MotiView className="flex flex-row items-center">
+              <Text className="font-[IRANSansLight] text-[14px]">{name}</Text>
+              {photoUrl ? (
+                <Image source={{ uri: photoUrl }} className="w-10 h-10 ml-2" />
+              ) : (
+                <ClassicCarIcon classStyle="w-7 h-7 ml-2" />
+              )}
+            </MotiView>
           </MotiView>
-          <MotiView className="flex flex-row items-center">
-            <Text className="font-[IRANSansLight] text-[14px]">{name}</Text>
-            {photoUrl ? (
-              <Image source={{ uri: photoUrl }} className="w-10 h-10 ml-2" />
-            ) : (
-              <ClassicCarIcon classStyle="w-7 h-7 ml-2" />
-            )}
-          </MotiView>
-        </MotiView>
-      )}
-    </MotiView>
+        )}
+      </MotiView>
+    </Pressable>
   );
 };
 

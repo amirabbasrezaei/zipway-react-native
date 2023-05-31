@@ -32,7 +32,7 @@ const NewRide = ({ navigation }: Props) => {
       {activeTrip.provider === "snapp" ? (
         <SnappNewRide navigation={navigation} />
       ) : activeTrip.provider === "tapsi" ? (
-        <TapsiNewRide />
+        <TapsiNewRide navigation={navigation}/>
       ) : activeTrip.provider === "maxim" ? (
         <MaximNewRide />
       ) : null}

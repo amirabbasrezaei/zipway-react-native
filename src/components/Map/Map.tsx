@@ -206,10 +206,7 @@ const Map = ({}: Props) => {
       if (!routeCoordinate?.origin && !routeCoordinate?.destination) {
         BackHandler.exitApp();
       }
-      console.log(
-        `origin: ${routeCoordinate?.origin}`,
-        `destination: ${routeCoordinate?.destination}`
-      );
+  
       if (routeCoordinate?.origin && !routeCoordinate?.destination) {
         setRouteCoordinate({ origin: null, originTitle: null });
         return true;

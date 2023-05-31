@@ -42,11 +42,7 @@ const AuthenticateScreen = ({ navigation }: Props) => {
 
   isFocused && isZipwayConfigStale && zipwayConfigRefetch();
 
-  useEffect(() => {
-    if (isZipwayConfigStale) {
-
-    }
-  }, [isZipwayConfigStale]);
+ 
 
   useEffect(() => {
     (async () => {
@@ -56,22 +52,13 @@ const AuthenticateScreen = ({ navigation }: Props) => {
       snappConfigMutate();
       setAppConfig(zipwayConfigData);
       setAppState("AUTHENTICATED");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MapScreen" }],
-      });
+      // navigation.navigate("MapScreen");
     }
   }, [zipwayConfigData]);
 
-  // useEffect(() => {
-  //   if (snappConfigData) {
-  //     console.log(snappConfigData);
-  //   }
-  // }, [isSnappConfigSuccess]);
 
-  // console.log("zipwayConfigData", zipwayConfigData);
-  console.log("isZipwayConfigStale", isZipwayConfigStale);
-  // console.log("isZipwayConfigPreviousData", isZipwayConfigPreviousData);
+
+
 
   useEffect(() => {
     (async () => {
