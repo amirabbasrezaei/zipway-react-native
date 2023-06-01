@@ -240,6 +240,11 @@ const Map = ({}: Props) => {
     >
       <View style={{ width }} className="block flex-1">
         <MapboxGL.MapView
+        pitchEnabled={false}
+        preferredFramesPerSecond={100}
+        rotateEnabled={false}
+        scaleBarEnabled={false}
+        
           logoEnabled={false}
           onRegionIsChanging={(e) => {
             setCameraLocation(e.geometry.coordinates);

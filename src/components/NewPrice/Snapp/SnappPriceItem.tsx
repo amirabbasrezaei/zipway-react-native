@@ -1,6 +1,6 @@
 import { Text, Dimensions, Image, Pressable } from "react-native";
 import React, { useEffect } from "react";
-import { MotiView, MotiText } from "moti";
+import { MotiView } from "moti";
 
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import splitNumber from "../../../../utils/splitNumber";
@@ -10,6 +10,7 @@ import { useNewSnappRide } from "../../../ReactQuery/SnappRequestHooks";
 import { useAppStore } from "../../../stores/appStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import classNames from "classnames";
+import { ActivityIndicator } from "react-native";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -25,6 +26,9 @@ type Props = {
     | undefined;
   photoUrl?: string;
   serviceType?: string;
+  setRequestButton: (e: RequestButton) => void;
+  requestButton: RequestButton;
+  selected: boolean;
 };
 
 const SnappPriceItem = ({
@@ -33,35 +37,33 @@ const SnappPriceItem = ({
   isLoading = true,
   minMaxPrice,
   photoUrl,
-  onPress,
   serviceType,
   navigation,
+  setRequestButton,
+  requestButton,
+  selected
 }: Props) => {
   const { routeCoordinate } = useMapStore();
   const { setActiveTrip, activeTrip } = useAppStore();
 
-  const { mutateSnappNewRide, snappNewRideData, isSnappNewRideSuccess } =
-    useNewSnappRide();
+  const {
+    mutateSnappNewRide,
+    snappNewRideData,
+    isSnappNewRideSuccess,
+    isSnappNewRideLoading,
+  } = useNewSnappRide();
 
   useEffect(() => {
     if (isSnappNewRideSuccess) {
       setActiveTrip({
-        tripId: snappNewRideData["data"]["ride_id"],
-      });
-      setActiveTrip({
         provider: "snapp",
         accepted: false,
         type: serviceType,
+        tripId: snappNewRideData["data"]["ride_id"],
       });
       navigation.navigate("SnappRideWaiting");
     }
   }, [isSnappNewRideSuccess]);
-
-  // useEffect(() => {
-  //   if (activeTrip?.canRequest && activeTrip.serviceName == name) {
-  //     mutateSnappNewRide(NewRideBody);
-  //   }
-  // }, [activeTrip]);
 
   const NewRideBody = {
     destination_details: routeCoordinate.destinationTitle,
@@ -78,9 +80,34 @@ const SnappPriceItem = ({
     service_type: Number(serviceType),
   };
 
+  useEffect(() => {
+    if (selected) {
+      setRequestButton({
+        name: name,
+        type: serviceType,
+        isLoading: isSnappNewRideLoading,
+        mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
+      });
+    }
+  }, [selected, isSnappNewRideLoading]);
+
   return (
-    <Pressable onPress={() => {setActiveTrip({serviceName: name, type: serviceType})}}>
-      <MotiView className={classNames("h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex", activeTrip?.type == serviceType ? "bg-blue-200" : "bg-white")}>
+    <Pressable
+      onPress={() =>
+        setRequestButton({
+          name: name,
+          type: serviceType,
+          isLoading: isSnappNewRideLoading,
+          mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
+        })
+      }
+    >
+      <MotiView
+        className={classNames(
+          "h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex",
+          requestButton?.type == serviceType ? "bg-blue-200" : "bg-white"
+        )}
+      >
         {isLoading || (!price && !minMaxPrice?.min) ? (
           <SkeletonPlaceholder borderRadius={4} angle={90}>
             <SkeletonPlaceholder.Item

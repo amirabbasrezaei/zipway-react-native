@@ -91,7 +91,7 @@ const SnappNewRide = ({ navigation }: Props) => {
         className="w-full  flex items-center justify-center absolute bottom-0 h-12"
       >
         <MotiView
-          className="bg-red-400 absolute left-0 bottom-0 flex-1 h-full  rounded-[14px]"
+          className="bg-red-500 absolute left-0 bottom-0 flex-1 h-full  rounded-[14px]"
           transition={{ type: "timing", duration: 100 }}
           animate={{ width: `${cancelRideProgressBar}%` }}
         />

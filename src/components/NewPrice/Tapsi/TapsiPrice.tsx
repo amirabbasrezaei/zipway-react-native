@@ -25,9 +25,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
   setRequestButton: (e: any) => void;
+  requestButton: RequestButton;
 };
 
-const TapsiPrice = ({ navigation, setRequestButton }: Props) => {
+const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   const [userState, setUserState] = useState("initial");
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { routeCoordinate } = useMapStore();
@@ -155,6 +156,9 @@ const TapsiPrice = ({ navigation, setRequestButton }: Props) => {
                         ]: any[]) => {
                           return tapsiInitPassengerSeriveKey == service.key ? (
                             <TapsiPriceItem
+                            selected={requestButton?.category == category.key &&
+                              requestButton?.type == tapsiInitPassengerSeriveKey}
+                              requestButton={requestButton}
                               setRequestButton={setRequestButton}
                               categoryType={category.key}
                               rideToken={tapsiNewPriceData?.data.token}

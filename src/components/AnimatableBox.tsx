@@ -1,7 +1,7 @@
-import { Dimensions, SafeAreaView } from "react-native";
+import { Dimensions, SafeAreaView, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useMapStore } from "../stores/mapStore";
-import { MotiView } from "moti";
+import { MotiView, View } from "moti";
 import SearchLocationInput from "./SearchLocation/SearchLocationInput";
 import SearchResults from "./SearchLocation/SearchResults";
 import NewPrices from "./NewPrice/NewPrices";
@@ -53,9 +53,12 @@ const AnimatableBox = ({ navigation }: Props) => {
   }, [placeBaseSearchData]);
 
   return (
-    <SafeAreaView className="flex-1 h-full w-full">
+
+    <>
+    {/* <View style={{ zIndex:20}} className="bg-black h-6 w-6 absolute top-0 right-0"><Text>dgsfv</Text></View> */}
+    <SafeAreaView style={{ zIndex:3}} className="flex-1 w-full h-full">
       <MotiView
-        transition={{ type: "timing", duration: 300 }}
+        transition={{ type: "timing", duration: 200 }}
         animate={{
           height: activeTrip?.accepted
             ? 300
@@ -79,10 +82,10 @@ const AnimatableBox = ({ navigation }: Props) => {
             : 20,
         }}
         className="absolute flex left-0 right-0 z-10 justify-center items-center drop-shadow-lg "
-        style={{ elevation: 3, zIndex: 3 }}
+        style={{  zIndex: 3 }}
         children={
           <MotiView
-            transition={{ type: "timing", duration: 300 }}
+            transition={{ type: "timing", duration: 200 }}
             animate={{
               width: activeTrip?.accepted
                 ? width
@@ -158,7 +161,10 @@ const AnimatableBox = ({ navigation }: Props) => {
           />
         }
       />
+      
      </SafeAreaView> 
+    
+    </>
   );
 };
 

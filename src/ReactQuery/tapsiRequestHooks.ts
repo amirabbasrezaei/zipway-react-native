@@ -84,7 +84,7 @@ export function useTapsiNewPrice() {
   } = useMutation({
     mutationFn: (body: any) => getTapsiNewPrice(body),
     retry: true,
-    retryDelay: 2000,
+    retryDelay: 20000,
   });
   return {
     tapsiNewPriceData,

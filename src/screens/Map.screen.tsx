@@ -38,7 +38,7 @@ const MapScreen = ({ navigation }: Props) => {
             <Map />
             <AnimatableBox navigation={navigation} />
             <Pressable
-              onPress={() => navigation.navigate("Account")}
+              onPress={() => navigation.navigate("NoNetwork")}
               style={{ elevation: 2, zIndex: 2 }}
               className="w-fit px-4 h-10 flex gap-x-2 flex-row bg-white absolute top-5 left-5 rounded-2xl items-center justify-center "
             >

@@ -162,6 +162,7 @@ export function useNewSnappRide() {
     isError: isSnappNewRideError,
     error: snappNewRideError,
     mutate: mutateSnappNewRide,
+    isLoading: isSnappNewRideLoading
   } = useMutation({
     mutationFn: (body: any) => snappNewRideRequest(body, headers),
   });
@@ -172,6 +173,7 @@ export function useNewSnappRide() {
     isSnappNewRideError,
     snappNewRideError,
     mutateSnappNewRide,
+    isSnappNewRideLoading
   };
 }
 

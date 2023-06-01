@@ -16,6 +16,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
+  setRequestButton: (e: any) => void;
+  requestButton: RequestButton
 };
 
 const UserState = {
@@ -30,14 +32,12 @@ const UserState = {
   },
 };
 
-const SnappPrice = ({navigation}: Props) => {
+const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   const { setActiveTrip } = useAppStore();
   const [userState, setUserState] = useState("initial");
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { snappAuthKey } = useAuthenticateStore();
   const { routeCoordinate } = useMapStore();
-
-
 
   const snappServiceTypesBody = {
     points: [
@@ -149,16 +149,19 @@ const SnappPrice = ({navigation}: Props) => {
             {services?.length &&
               services.map((service) => (
                 <SnappPriceItem
+                requestButton={requestButton}
+                selected={requestButton?.type == service?.type}
+                key={service?.type}
+                  setRequestButton={setRequestButton}
                   name={service?.name}
                   isLoading={userState === "initial" || newSnappPriceLoading}
                   serviceType={service?.type}
-                  key={service?.name}
                   navigation={navigation}
                   photoUrl={service?.photo_url}
                   price={
-                    newSnappPriceData?.data.prices?.filter(
-                      (item) => item.type === service.type
-                    )[0].final / 10
+                    newSnappPriceData?.data?.prices ? newSnappPriceData?.data?.prices.filter(
+                      (item) => item?.type === service?.type
+                    )[0].final / 10 : 1000
                   }
                 />
               ))}

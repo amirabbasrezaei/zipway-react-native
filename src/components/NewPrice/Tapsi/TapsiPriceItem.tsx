@@ -34,7 +34,9 @@ type Props = {
   routeCoordinate: RouteCoordinate;
   rideToken: string;
   key: React.Key;
-  setRequestButton: (e: any) => void;
+  setRequestButton: (e: RequestButton) => void;
+  requestButton: RequestButton;
+  selected: boolean;
 };
 
 const TapsiPriceItem = ({
@@ -49,6 +51,8 @@ const TapsiPriceItem = ({
   rideToken,
   categoryType,
   setRequestButton,
+  requestButton,
+  selected
 }: Props) => {
   const { setActiveTrip, activeTrip } = useAppStore();
   const {
@@ -86,7 +90,6 @@ const TapsiPriceItem = ({
   };
 
   useEffect(() => {
-    console.log(tapsiRideData);
     if (tapsiRideData?.data.ride.status == "FINDING_DRIVER") {
       setActiveTrip({
         provider: "tapsi",
@@ -97,54 +100,39 @@ const TapsiPriceItem = ({
       });
       navigation.navigate("TapsiRideWaiting");
     }
-  }, [isTapsiRideSucceed]);
+  }, [tapsiRideData]);
 
   useEffect(() => {
     if (
-      activeTrip?.categoryType == categoryType &&
-      activeTrip?.type == serviceType
+      selected
     ) {
-      console.log(tapsiRideError);
-      setRequestButton(
-        <Pressable
-          disabled={isTapsiRideLoading}
-          onPress={() => {
-            mutateTapsiRide(requestRideBody);
-          }}
-          style={{ elevation: 2, zIndex: 2 }}
-          className={classNames(
-            " w-[80%]  h-[57]  items-center justify-center rounded-[20px]",
-            isTapsiRideLoading ? "bg-gray-400" : "bg-blue-600"
-          )}
-        >
-          {isTapsiRideLoading ? (
-            <ActivityIndicator color={"#fff"} size={24} />
-          ) : (
-            <Text className="font-[IRANSansMedium] text-white ">
-              درخواست سرویس {name}
-            </Text>
-          )}
-        </Pressable>
-      );
+      setRequestButton({
+        name: name,
+        type: serviceType,
+        category: categoryType,
+        isLoading: isTapsiRideLoading,
+        mutateRideFunction: () => mutateTapsiRide(requestRideBody)
+      })
     }
-  }, [activeTrip, tapsiRideError, isTapsiRideLoading]);
+  }, [selected,  isTapsiRideLoading]);
 
   return (
     <>
       <Pressable
-        onPress={() => {
-          setActiveTrip({
-            serviceName: name,
-            categoryType: categoryType,
+        onPress={() =>
+          setRequestButton({
+            name: name,
             type: serviceType,
-          });
-          // console.log(categoryType + serviceType);
-        }}
+            category: categoryType,
+            mutateRideFunction: () => mutateTapsiRide(requestRideBody),
+            isLoading: isTapsiRideLoading
+          })
+        }
       >
         <MotiView
           className={classNames(
             "h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex",
-            activeTrip?.type == serviceType ? "bg-blue-200" : "bg-white"
+            requestButton?.type == serviceType ? "bg-blue-200" : "bg-white"
           )}
         >
           {isLoading || (!price && !minMaxPrice?.min) ? (

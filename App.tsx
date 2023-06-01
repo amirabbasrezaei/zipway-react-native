@@ -21,6 +21,7 @@ import PaymentFailed from "./src/screens/Account/Payment/PaymentFailed";
 import PaymentSuccess from "./src/screens/Account/Payment/PaymentSuccess";
 import Logout from "./src/screens/Account/Logout";
 import TapsiRideWaiting from "./src/screens/TapsiRideWaiting.screen";
+import NoNetwork from "./src/screens/NoNetwork.screen";
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,15 @@ export default function App() {
                       component={AccountScreen}
                       options={{
                         title: "حساب کاربری",
+                        headerShown: false,
+                        animation: "flip",
+                      }}
+                    />
+                  <RootStack.Screen
+                      name="NoNetwork"
+                      component={NoNetwork}
+                      options={{
+                        title: "NoNetwork",
                         headerShown: false,
                         animation: "flip",
                       }}
