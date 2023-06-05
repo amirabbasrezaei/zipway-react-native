@@ -56,7 +56,7 @@ const AnimatableBox = ({ navigation }: Props) => {
 
     <>
     {/* <View style={{ zIndex:20}} className="bg-black h-6 w-6 absolute top-0 right-0"><Text>dgsfv</Text></View> */}
-    <SafeAreaView style={{ zIndex:3}} className="flex-1 w-full h-full">
+    {/* <SafeAreaView style={!showNewTrip ? { zIndex:5, elevation: 5} : null} className="flex-1 w-full h-full"> */}
       <MotiView
         transition={{ type: "timing", duration: 200 }}
         animate={{
@@ -82,7 +82,7 @@ const AnimatableBox = ({ navigation }: Props) => {
             : 20,
         }}
         className="absolute flex left-0 right-0 z-10 justify-center items-center drop-shadow-lg "
-        style={{  zIndex: 3 }}
+        style={{  zIndex: 4, elevation: 4 }}
         children={
           <MotiView
             transition={{ type: "timing", duration: 200 }}
@@ -123,7 +123,7 @@ const AnimatableBox = ({ navigation }: Props) => {
                 routeCoordinate?.origin &&
                 !showNewTrip
                   ? 0
-                  : 3,
+                  : 4,
               backgroundColor:
                 routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
@@ -162,7 +162,7 @@ const AnimatableBox = ({ navigation }: Props) => {
         }
       />
       
-     </SafeAreaView> 
+     {/* </SafeAreaView>  */}
     
     </>
   );

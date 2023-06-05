@@ -67,10 +67,10 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
     if (tapsiAuthKey && isTapsiNewPriceSucceed) {
       setUserState("isAuthorized");
     }
-    if (isTapsiNewPriceError) {
+    if (isTapsiNewPriceError || !tapsiPassengerInitData) {
       setUserState("isNotAuthorized");
     }
-  }, [isTapsiNewPriceSucceed, isTapsiNewPriceError]);
+  }, [isTapsiNewPriceSucceed, isTapsiNewPriceError, tapsiPassengerInitData]);
 
   // useEffect(() => {
   //   if (tapsiPassengerInitData?.data) {
@@ -80,8 +80,10 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   //   }
   // }, [tapsiPassengerInitData]);
 
+  console.log(tapsiPassengerInitData)
+
   return (
-    <View className="mt-8">
+    <View className="mt-8  h-fit" >
       <View className="w-full flex-row-reverse block relative ">
         <Image
           className="w-[114px] h-[26px] "

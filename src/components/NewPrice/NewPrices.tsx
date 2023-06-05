@@ -35,8 +35,27 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
   }, []);
 
   return (
-    <ScrollView className=" w-full h-full flex-1  ">
-        {/* <View className="px-4 h-full  ">
+    <View  className=" flex-1 bg-gray-50 relative">
+    <View
+        
+        className="h-[60px] bg-white  shadow-md shadow-gray-400 justify-center items-center relative"
+      >
+        <Pressable
+          hitSlop={10}
+          onPress={() => {
+            setShowNewTrip(false);
+          }}
+          className="absolute right-4"
+        >
+          <ArrowRightIcon classStyle=" fill-gray-700 w-6 h-6 " />
+        </Pressable>
+        <Text className="font-[IRANSansMedium] text-gray-700 text-[16px]">
+          مقایسه سرویس ها
+        </Text>
+      </View>
+      <ScrollView style={{ elevation: 10, zIndex: 10 }} className="flex-1 w-full h-full ">
+       
+        <View className="px-4 h-full  ">
             <SnappPrice
               requestButton={requestButton}
               navigation={navigation}
@@ -48,13 +67,18 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
               navigation={navigation}
             />
             <MaximTrip />
-          </View> */}
-        {Array.from({ length: 20 }, (e, index) => index).map((e) => (
-          <View key={e} className="h-14 w-full bg-gray-100 mt-10"></View>
-        ))}
-      </ScrollView>
+</View>
+       {/* {Array.from({length: 20}, (e, index) => index).map((e) => <View  key={e} className="h-14 w-full bg-black mt-10"></View>)} */}
+   </ScrollView>
+     <RequestServiceButton requestButton={requestButton}/>
+    
+  </View>
+
   );
 };
 
 export default NewPrices;
 NewPrices;
+
+
+ 
