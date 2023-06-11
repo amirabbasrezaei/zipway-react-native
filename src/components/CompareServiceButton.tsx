@@ -1,30 +1,75 @@
-import { View, Text, Pressable, Vibration } from 'react-native'
-import React from 'react'
-import { ArrowLeftIcon } from './Svgs'
-import { MotiView } from 'moti'
+import {
+  View,
+  Text,
+  Pressable,
+  Vibration,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect } from "react";
+import { ArrowLeftIcon } from "./Svgs";
+import { AnimatePresence, MotiView } from "moti";
+import { useAppStore } from "../stores/appStore";
+import { useMapStore } from "../stores/mapStore";
+import { trpc } from "../../utils/trpc";
 
-type Props = {
-    onPress: () => void
-}
+type Props = {};
 
-const CompareServiceButton = ({onPress}: Props) => {
+const CompareServiceButton = ({}: Props) => {
+  const { showNewTrip, setShowNewTrip, setZipwayRideId } = useAppStore();
+  const { routeCoordinate } = useMapStore();
+  const {
+    mutate: mutateRequestRide,
+    data: RequestRideData,
+    isLoading: isLoadingRequestRide,
+    isSuccess,
+    error,
+  } = trpc.ride.requestRide.useMutation();
+
+  useEffect(() => {
+    if (RequestRideData?.result == "OK") {
+      setZipwayRideId(RequestRideData.data.rideId)
+      setShowNewTrip(true);
+      console.log(RequestRideData);
+    }
+  }, [RequestRideData]);
   return (
-    <Pressable
+    <AnimatePresence>
+      {routeCoordinate?.destination &&
+      routeCoordinate?.origin &&
+      !showNewTrip ? (
+        <MotiView
+          style={{ zIndex: 6 }}
+          from={{ opacity: 0, scale: 0.7, bottom: 0 }}
+          animate={{ opacity: 1, scale: 1, bottom: 30 }}
+          exit={{ opacity: 0, scale: 0.7, bottom: 0 }}
+          transition={{ type: "timing", duration: 200 }}
+          className="h-14 w-full bg-transparent  absolute justify-center items-center"
+        >
+          <Pressable
             onPress={() => {
-                onPress()
-              
+              mutateRequestRide({
+                destinationCoordinates: [
+                  
+                   {longitude: Number(routeCoordinate.destination[0]), latitude: Number(routeCoordinate.destination[1])}
+                  
+                ],
+                destinationDescription: routeCoordinate.destinationTitle,
+                originCoordinate: {longitude: routeCoordinate.origin[0], latitude: routeCoordinate.origin[1]},
+                originDescription: routeCoordinate.destinationTitle,
+              });
               Vibration.vibrate([50, 50]);
             }}
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 0 },
               shadowOpacity: 0.5,
-              elevation: 6,
+
+              zIndex: 2,
             }}
-            className="h-14 w-full bg-white   mt-[3] rounded-[25px] flex flex-row items-center justify-between"
+            className="h-full rounded-[25px] w-[300] bg-white flex flex-row items-center justify-between"
           >
             <View className="h-full w-[20%]  items-center justify-center">
-              <ArrowLeftIcon classStyle="fill-black w-8 h-8" />
+              <ArrowLeftIcon classStyle="fill-blue-500 w-8 h-8" />
             </View>
             <MotiView
               transition={{ duration: 100, type: "timing" }}
@@ -32,12 +77,19 @@ const CompareServiceButton = ({onPress}: Props) => {
               animate={{ width: "80%" }}
               className=" absolute right-0 bg-blue-500 h-full rounded-[25px] items-center justify-center"
             >
-              <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
-                مقایسه سرویس ها
-              </Text>
+              {isLoadingRequestRide ? (
+                <ActivityIndicator color={"#fff"} size={24} />
+              ) : (
+                <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
+                  مقایسه سرویس ها
+                </Text>
+              )}
             </MotiView>
           </Pressable>
-  )
-}
+        </MotiView>
+      ) : null}
+    </AnimatePresence>
+  );
+};
 
-export default CompareServiceButton
+export default CompareServiceButton;

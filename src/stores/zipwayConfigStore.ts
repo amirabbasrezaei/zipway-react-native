@@ -1,4 +1,5 @@
 import create from "zustand";
+import type { ZipwayConfigPayload } from "../../../zipway-server/src/controllers/app.controller";
 
 // interface AppConfig{
 //     mapStyles?: any | null;
@@ -11,7 +12,7 @@ import create from "zustand";
 // }
 
 interface ZipwayConfigType {
-  appConfig:any;
+  appConfig:ZipwayConfigPayload;
   setAppConfig: (appConfig: ZipwayConfigType["appConfig"]) => void;
 }
 

@@ -37,7 +37,7 @@ export function useZipwayConfig() {
     failureReason: zipwayConfigFailureReason,
     refetch: zipwayConfigRefetch,
     isLoading: isZipwayConfigLoading,
-    isStale: isZipwayConfigStale
+    isStale: isZipwayConfigStale,
   } = trpc.app.zipwayConfig.useQuery({
     deviceModel: Device.modelName,
     deviceId: Application.androidId,

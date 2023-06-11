@@ -13,11 +13,12 @@ import {
 } from "../../../ReactQuery/SnappRequestHooks";
 import SnappPriceItem from "./SnappPriceItem";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { trpc } from "../../../../utils/trpc";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
   setRequestButton: (e: any) => void;
-  requestButton: RequestButton
+  requestButton: RequestButton;
 };
 
 const UserState = {
@@ -33,11 +34,13 @@ const UserState = {
 };
 
 const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
-  const { setActiveTrip } = useAppStore();
+  const { zipwayRideId } = useAppStore();
   const [userState, setUserState] = useState("initial");
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { snappAuthKey } = useAuthenticateStore();
   const { routeCoordinate } = useMapStore();
+  const { data: updateRideData, mutate: mutateUpdateRide } =
+    trpc.ride.updateRide.useMutation();
 
   const snappServiceTypesBody = {
     points: [
@@ -90,8 +93,22 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
     snappNewPriceFailureReason,
   } = useSnappNewPrice();
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    if (snappAuthKey && isSnappNewPriceSucceed) {
+    if (snappAuthKey && newSnappPriceData?.data && zipwayRideId) {
+      // mutateUpdateRide({
+      //   rideId: zipwayRideId,
+      //   status: "NOT_INITIATED",
+      //   snappPrices: services.map((service) => ({
+      //     serviceType: service?.type,
+      //     price: newSnappPriceData?.data?.prices
+      //       ? newSnappPriceData.data.prices.filter(
+      //           (item) => item?.type === service?.type
+      //         )[0].final / 10
+      //       : null,
+      //   })),
+      // });
       setUserState("isAuthorized");
     }
     if (isSnappNewPriceError) {
@@ -149,9 +166,10 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
             {services?.length &&
               services.map((service) => (
                 <SnappPriceItem
-                requestButton={requestButton}
-                selected={requestButton?.type == service?.type}
-                key={service?.type}
+                  commission={updateRideData.commission}
+                  requestButton={requestButton}
+                  selected={requestButton?.type == service?.type}
+                  key={service?.type}
                   setRequestButton={setRequestButton}
                   name={service?.name}
                   isLoading={userState === "initial" || newSnappPriceLoading}
@@ -159,9 +177,11 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                   navigation={navigation}
                   photoUrl={service?.photo_url}
                   price={
-                    newSnappPriceData?.data?.prices ? newSnappPriceData?.data?.prices.filter(
-                      (item) => item?.type === service?.type
-                    )[0].final / 10 : 1000
+                    newSnappPriceData?.data?.prices
+                      ? newSnappPriceData?.data?.prices.filter(
+                          (item) => item?.type === service?.type
+                        )[0].final / 10
+                      : 1000
                   }
                 />
               ))}

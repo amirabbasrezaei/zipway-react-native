@@ -11,6 +11,7 @@ import { useAppStore } from "../../../stores/appStore";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import classNames from "classnames";
 import { ActivityIndicator } from "react-native";
+import { trpc } from "../../../../utils/trpc";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -29,6 +30,7 @@ type Props = {
   setRequestButton: (e: RequestButton) => void;
   requestButton: RequestButton;
   selected: boolean;
+  commission: number;
 };
 
 const SnappPriceItem = ({
@@ -41,10 +43,17 @@ const SnappPriceItem = ({
   navigation,
   setRequestButton,
   requestButton,
-  selected
+  selected,
+  commission
 }: Props) => {
+  const {
+    isLoading: isUpdateRideLoading,
+    mutate: mutateUpdateRide,
+    data: updateRideData,
+  } = trpc.ride.updateRide.useMutation();
+
   const { routeCoordinate } = useMapStore();
-  const { setActiveTrip, activeTrip } = useAppStore();
+  const { setActiveTrip, activeTrip, zipwayRideId } = useAppStore();
 
   const {
     mutateSnappNewRide,
@@ -55,6 +64,14 @@ const SnappPriceItem = ({
 
   useEffect(() => {
     if (isSnappNewRideSuccess) {
+      mutateUpdateRide({rideId: zipwayRideId, status: "FINDING_DRIVER", trip: {
+        accepted: false,
+        provider: "SNAPP",
+        numberOfPassengers: 1,
+        price,
+        tripId: snappNewRideData["data"]["ride_id"],
+        type: serviceType
+      }})
       setActiveTrip({
         provider: "snapp",
         accepted: false,
@@ -80,16 +97,16 @@ const SnappPriceItem = ({
     service_type: Number(serviceType),
   };
 
-  useEffect(() => {
-    if (selected) {
-      setRequestButton({
-        name: name,
-        type: serviceType,
-        isLoading: isSnappNewRideLoading,
-        mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
-      });
-    }
-  }, [selected, isSnappNewRideLoading]);
+  // useEffect(() => {
+  //   if (selected) {
+  //     setRequestButton({
+  //       name: name,
+  //       type: serviceType,
+  //       isLoading: isSnappNewRideLoading,
+  //       mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
+  //     });
+  //   }
+  // }, [selected, isSnappNewRideLoading]);
 
   return (
     <Pressable
@@ -97,8 +114,20 @@ const SnappPriceItem = ({
         setRequestButton({
           name: name,
           type: serviceType,
-          isLoading: isSnappNewRideLoading,
-          mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
+          mutateRideFunction: () =>
+            mutateUpdateRide({
+              rideId: zipwayRideId,
+              status: "FINDING_DRIVER",
+              trip: {
+                accepted: false,
+                numberOfPassengers: 1,
+                price,
+                provider: "TAPSI",
+                type: serviceType,
+              },
+            }),
+          isLoading: isSnappNewRideLoading || isUpdateRideLoading,
+          commission,
         })
       }
     >

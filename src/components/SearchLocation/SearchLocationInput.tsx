@@ -4,12 +4,17 @@ import {
   TextInput,
   Pressable,
   Vibration,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import React, { useEffect } from "react";
 import classNames from "classnames";
 import { RouteCoordinate, useMapStore } from "../../stores/mapStore";
-import {  ArrowLeftIcon, ArrowRightIcon, MagnifierIcon, XMarkIcon } from ".././Svgs";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MagnifierIcon,
+  XMarkIcon,
+} from ".././Svgs";
 import { trpc } from "../../../utils/trpc";
 import { MotiView } from "moti";
 import CompareServiceButton from "../CompareServiceButton";
@@ -57,8 +62,6 @@ const SearchLocationInput = ({
     }
   }, [isCoordinateToAddressSuccedd]);
 
- 
-
   return (
     <View
       style={{ elevation: 4 }}
@@ -68,25 +71,29 @@ const SearchLocationInput = ({
       )}
     >
       {isInputActive ? (
-          <View
-            onTouchEnd={() => {
-              Keyboard.dismiss();
-              setIsInputActive(false);
-            }}
-            className="w-full h-8  items-center flex-row-reverse px-2"
-          >
-            <ArrowRightIcon classStyle="w-[25px] h-[25px] fill-gray-600" />
-          </View>
-        ) : null}
+        <View
+          onTouchEnd={() => {
+            Keyboard.dismiss();
+            setIsInputActive(false);
+          }}
+          className="w-full h-8  items-center flex-row-reverse px-2"
+        >
+          <ArrowRightIcon classStyle="w-[25px] h-[25px] fill-gray-600" />
+        </View>
+      ) : null}
       <View
         className={classNames(
           "flex justify-center items-center w-full ",
           isInputActive ? "flex-row" : "flex-col"
         )}
       >
-        
         {!routeCoordinate?.origin ? (
-          <View className={classNames(" w-full flex-1 mt-2 relative items-center", isInputActive ? "h-[56px]" : "h-12")}>
+          <View
+            className={classNames(
+              " w-full flex-1 mt-2 relative items-center",
+              isInputActive ? "h-[56px]" : "h-12"
+            )}
+          >
             <TextInput
               placeholder="مبدا ..."
               className={classNames(
@@ -94,7 +101,9 @@ const SearchLocationInput = ({
                 routeCoordinate?.originTitle
                   ? "text-gray-500 "
                   : "text-gray-800 ",
-                  isInputActive ? "h-[56px] w-[95%] border border-gray-200 bg-none" : "h-[20px] w-[100%] bg-gray-50"
+                isInputActive
+                  ? "h-[56px] w-[95%] border border-gray-200 bg-none"
+                  : "h-[20px] w-[100%] bg-gray-50"
               )}
               value={
                 routeCoordinate?.originTitle
@@ -110,7 +119,9 @@ const SearchLocationInput = ({
               cursorColor={"#000"}
               editable={!routeCoordinate?.origin}
             />
-            {!isInputActive? <MagnifierIcon classStyle="w-5 h-5 absolute fill-gray-500 top-[15] left-[14]" /> : null}
+            {!isInputActive ? (
+              <MagnifierIcon classStyle="w-5 h-5 absolute fill-gray-500 top-[15] left-[14]" />
+            ) : null}
           </View>
         ) : null}
         {!isInputActive && !routeCoordinate?.origin ? (
@@ -176,13 +187,11 @@ const SearchLocationInput = ({
             <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
               تائید مقصد
             </Text>
-            
           </View>
         ) : null}
-        {routeCoordinate?.origin && routeCoordinate?.destination ? (
-          <CompareServiceButton  onPress={() => setShowNewTrip(true)}/>
-        ) : null}
-        
+        {/* {routeCoordinate?.origin && routeCoordinate?.destination ? (
+          <CompareServiceButton />
+        ) : null} */}
       </View>
     </View>
   );

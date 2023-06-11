@@ -81,10 +81,11 @@ export function useTapsiNewPrice() {
     mutate: mutateTapsiNewPrice,
     isSuccess: isTapsiNewPriceSucceed,
     isError: isTapsiNewPriceError,
+    reset: resetTapsiNewPrice
   } = useMutation({
     mutationFn: (body: any) => getTapsiNewPrice(body),
     retry: true,
-    retryDelay: 20000,
+    retryDelay: 30000
   });
   return {
     tapsiNewPriceData,
@@ -92,6 +93,7 @@ export function useTapsiNewPrice() {
     mutateTapsiNewPrice,
     isTapsiNewPriceSucceed,
     isTapsiNewPriceError,
+    resetTapsiNewPrice
   };
 }
 
@@ -151,15 +153,16 @@ export function useTapsiPassengerInit() {
     data: tapsiPassengerInitData,
     refetch: refetchTapsiPassengerInit,
     isLoading: isTapsiPassengerInitLoading,
+    isStale: isTapsiPassengerInitStale
   } = useQuery(["tapsiInitPassenger"], {
     queryFn: initPassengerRequest,
-    staleTime: 10000,
-    refetchInterval: 10000,
+    refetchInterval: 30000,
   });
   return {
     tapsiPassengerInitData,
     refetchTapsiPassengerInit,
     isTapsiPassengerInitLoading,
+    isTapsiPassengerInitStale
   };
 }
 

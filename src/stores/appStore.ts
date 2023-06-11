@@ -17,7 +17,6 @@ type DriverType = {
     lat: number;
     lng: number;
   };
- 
 };
 
 interface AppStoreType {
@@ -31,9 +30,13 @@ interface AppStoreType {
     price?: number;
     serviceName?: string;
     canRequest?: boolean;
-    categoryType?: string
+    categoryType?: string;
   } | null;
   setActiveTrip: (input: AppStoreType["activeTrip"]) => void;
+  showNewTrip: boolean;
+  setShowNewTrip: (e: AppStoreType["showNewTrip"]) => void;
+  zipwayRideId: string | null;
+  setZipwayRideId: (e: AppStoreType["zipwayRideId"]) => void;
 }
 
 export const useAppStore = create<AppStoreType>((set) => ({
@@ -41,29 +44,37 @@ export const useAppStore = create<AppStoreType>((set) => ({
   setActiveTrip(input) {
     set(({ activeTrip }) => ({ activeTrip: { ...activeTrip, ...input } }));
   },
+  showNewTrip: false,
+  setShowNewTrip(input) {
+    set({ showNewTrip: input });
+  },
+  zipwayRideId: null,
+  setZipwayRideId(e) {
+    set({zipwayRideId: e})
+  },
 }));
 // {
-  // accepted: true,
-  // provider: "snapp",
-  // driverInfo: {
-  //   cellphone: "+989303183091",
-  //   driver_name: "میثم حقدوست وفا",
-  //   image_url: "https://statics.snapp.ir/driver/yWoMBgOKlVZq7DqGpdNL-1.jpg",
-  //   plate: {
-  //     character: "ع",
-  //     iran_id: 53,
-  //     part_a: 18,
-  //     part_b: 413,
-  //     type: 1,
-  //   },
-  //   plate_number_url:
-  //     "https://statics.snapp.ir/plates/v2/eyJjaGFyYWN0ZXIiOjEwLCJpcmFuX2lkIjo1MywicGFydF9hIjoxOCwicGFydF9iIjo0MTMsInR5cGUiOjF9.svg",
-  //   vehicle_color: "F7D74E",
-  //   vehicle_model: "سمند تاکسی زرد",
-  //   driver_location_info: {
-  //     lat: 35.6503798,
-  //     lng: 51.3488862,
-  //   },
-  // },
-  // price: 80000
+// accepted: true,
+// provider: "snapp",
+// driverInfo: {
+//   cellphone: "+989303183091",
+//   driver_name: "میثم حقدوست وفا",
+//   image_url: "https://statics.snapp.ir/driver/yWoMBgOKlVZq7DqGpdNL-1.jpg",
+//   plate: {
+//     character: "ع",
+//     iran_id: 53,
+//     part_a: 18,
+//     part_b: 413,
+//     type: 1,
+//   },
+//   plate_number_url:
+//     "https://statics.snapp.ir/plates/v2/eyJjaGFyYWN0ZXIiOjEwLCJpcmFuX2lkIjo1MywicGFydF9hIjoxOCwicGFydF9iIjo0MTMsInR5cGUiOjF9.svg",
+//   vehicle_color: "F7D74E",
+//   vehicle_model: "سمند تاکسی زرد",
+//   driver_location_info: {
+//     lat: 35.6503798,
+//     lng: 51.3488862,
+//   },
+// },
+// price: 80000
 // }

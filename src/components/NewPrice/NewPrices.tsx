@@ -35,11 +35,8 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
   }, []);
 
   return (
-    <View  className=" flex-1 bg-gray-50 relative">
-    <View
-        
-        className="h-[60px] bg-white  shadow-md shadow-gray-400 justify-center items-center relative"
-      >
+    <View className=" flex-1 bg-gray-50 relative">
+      <View className="h-[60px] bg-white  shadow-md shadow-gray-400 justify-center items-center relative">
         <Pressable
           hitSlop={10}
           onPress={() => {
@@ -53,32 +50,29 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
           مقایسه سرویس ها
         </Text>
       </View>
-      <ScrollView style={{ elevation: 10, zIndex: 10 }} className="flex-1 w-full h-full ">
-       
+      <ScrollView
+        style={{ elevation: 10, zIndex: 10 }}
+        className="flex-1 w-full h-full "
+      >
         <View className="px-4 h-full  ">
-            <SnappPrice
-              requestButton={requestButton}
-              navigation={navigation}
-              setRequestButton={setRequestButton}
-            />
-            <TapsiPrice
-              requestButton={requestButton}
-              setRequestButton={setRequestButton}
-              navigation={navigation}
-            />
-            <MaximTrip />
-</View>
-       {/* {Array.from({length: 20}, (e, index) => index).map((e) => <View  key={e} className="h-14 w-full bg-black mt-10"></View>)} */}
-   </ScrollView>
-     <RequestServiceButton requestButton={requestButton}/>
-    
-  </View>
-
+          <SnappPrice
+            requestButton={requestButton}
+            navigation={navigation}
+            setRequestButton={setRequestButton}
+          />
+          <TapsiPrice
+            requestButton={requestButton}
+            setRequestButton={setRequestButton}
+            navigation={navigation}
+          />
+          <MaximTrip />
+        </View>
+        {/* {Array.from({length: 20}, (e, index) => index).map((e) => <View  key={e} className="h-14 w-full bg-black mt-10"></View>)} */}
+      </ScrollView>
+      <RequestServiceButton navigation={} requestButton={requestButton} />
+    </View>
   );
 };
 
 export default NewPrices;
 NewPrices;
-
-
- 

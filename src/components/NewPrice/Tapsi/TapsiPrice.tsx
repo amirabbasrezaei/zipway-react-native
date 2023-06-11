@@ -1,14 +1,6 @@
 import { View, Text, Image, Pressable, Dimensions } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import ItemOptions from "../../ItemOptions";
-import {
-  ClassicCarIcon,
-  EllipsisIcon,
-  SettingsIcon,
-  SignInIcon,
-} from "../../Svgs";
-import { useNavigation } from "@react-navigation/native";
+import { SignInIcon } from "../../Svgs";
 import { FocusContext, UseFocusContextArgs } from "../../FocusComponent";
 import TapsiLoginModal from "../../TapsiAuth/TapsiLoginModal";
 import {
@@ -21,6 +13,8 @@ import { MotiText, MotiView } from "moti";
 
 import TapsiPriceItem from "./TapsiPriceItem";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { trpc } from "../../../../utils/trpc";
+import { useAppStore } from "../../../stores/appStore";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -30,16 +24,22 @@ type Props = {
 
 const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   const [userState, setUserState] = useState("initial");
+  const { zipwayRideId } = useAppStore();
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { routeCoordinate } = useMapStore();
   const { tapsiAuthKey } = useAuthenticateStore();
   const { tapsiPassengerInitData } = useTapsiPassengerInit();
+  const { data: updateRideData, mutate: mutateUpdateRide } =
+    trpc.ride.updateRide.useMutation({
+      retry: false,
+    });
   const {
     mutateTapsiNewPrice,
     isTapsiNewPriceLoading,
     isTapsiNewPriceSucceed,
     tapsiNewPriceData,
     isTapsiNewPriceError,
+    resetTapsiNewPrice,
   } = useTapsiNewPrice();
 
   const body = {
@@ -64,26 +64,56 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   }, [tapsiAuthKey]);
 
   useEffect(() => {
-    if (tapsiAuthKey && isTapsiNewPriceSucceed) {
-      setUserState("isAuthorized");
+    if (
+      tapsiAuthKey &&
+      isTapsiNewPriceSucceed &&
+      tapsiPassengerInitData?.data
+    ) {
+      try {
+        let filteredData: Array<any> = [];
+        tapsiNewPriceData?.data["categories"].map((category) => {
+          return category?.services?.map((service) => {
+            // console.log(service);
+            filteredData.push({
+              type: service.key,
+              price: service.prices[0]?.passengerShare
+                ? service.prices[0]?.passengerShare
+                : 0,
+              categoryType: category.key,
+              tripToken: tapsiNewPriceData?.data.token,
+              // tripId: tapsiPassengerInitData.data.activeTip.rideId,
+            });
+          });
+        });
+
+        mutateUpdateRide({
+          rideId: zipwayRideId,
+          status: "NOT_INITIATED",
+          tapsiPrices: filteredData,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
-    if (isTapsiNewPriceError || !tapsiPassengerInitData) {
+
+    if (isTapsiNewPriceError) {
       setUserState("isNotAuthorized");
+    }
+    if(!tapsiPassengerInitData){
+      setUserState("initial");
     }
   }, [isTapsiNewPriceSucceed, isTapsiNewPriceError, tapsiPassengerInitData]);
 
-  // useEffect(() => {
-  //   if (tapsiPassengerInitData?.data) {
-  //     Object.entries(tapsiPassengerInitData?.data.services).map(
-  //       ([key, value]) => console.log(value)
-  //     );
-  //   }
-  // }, [tapsiPassengerInitData]);
+  useEffect(() => {
+    if (updateRideData?.result == "OK") {
+      setUserState("isAuthorized");
+    }
+  }, [updateRideData]);
 
-  console.log(tapsiPassengerInitData)
+  updateRideData && console.log(updateRideData.commission)
 
   return (
-    <View className="mt-8  h-fit" >
+    <View className="mt-8  h-fit">
       <View className="w-full flex-row-reverse block relative ">
         <Image
           className="w-[114px] h-[26px] "
@@ -120,31 +150,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
           </MotiView>
         ) : (
           <>
-            {/* {tapsiPassengerInitData?.data ? Object.entries(tapsiPassengerInitData?.data.services).map(
-                ([key, tapsiSeriveType]: any[]) => (
-                  <View className="mt-5">
-                    <TapsiPriceItem
-                      key={tapsiSeriveType.categoryType}
-                      serviceType={tapsiSeriveType.categoryType}
-                      routeCoordinate={routeCoordinate}
-                      navigation={navigation}
-                      name={tapsiSeriveType.title}
-                      price={10000}
-                      // minMaxPrice={{
-                      //   max: service.prices[0]?.maxPrice?.passengerShare,
-                      //   min: service.prices[0]?.minPrice?.passengerShare,
-                      // }}
-                      onPress={() => null}
-                      isLoading={
-                        userState === "initial" || isTapsiNewPriceLoading
-                      }
-                    />
-                  </View>
-                )
-              )
-            : null} */}
-
-            {tapsiNewPriceData?.data["categories"].map((category) => (
+            {updateRideData ? tapsiNewPriceData?.data["categories"].map((category) => (
               <View key={category.key} className="mt-5">
                 <Text className="font-[IRANSansMedium] mb-3 mr-3 text-gray-500">
                   {category.title}
@@ -158,8 +164,11 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                         ]: any[]) => {
                           return tapsiInitPassengerSeriveKey == service.key ? (
                             <TapsiPriceItem
-                            selected={requestButton?.category == category.key &&
-                              requestButton?.type == tapsiInitPassengerSeriveKey}
+                              selected={
+                                requestButton?.category == category.key &&
+                                requestButton?.type ==
+                                  tapsiInitPassengerSeriveKey
+                              }
                               requestButton={requestButton}
                               setRequestButton={setRequestButton}
                               categoryType={category.key}
@@ -168,6 +177,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                               serviceType={tapsiInitPassengerSeriveKey}
                               routeCoordinate={routeCoordinate}
                               navigation={navigation}
+                              commission={updateRideData.commission}
                               name={tapsiInitPassengerSerivce.title}
                               price={service.prices[0]?.passengerShare}
                               iconUrl={tapsiInitPassengerSerivce.iconUrl}
@@ -189,7 +199,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                     : null
                 )}
               </View>
-            ))}
+            )) : null}
           </>
         )}
       </View>

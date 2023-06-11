@@ -1,7 +1,7 @@
-import { Dimensions, SafeAreaView, Text } from "react-native";
+import { Dimensions} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useMapStore } from "../stores/mapStore";
-import { MotiView, View } from "moti";
+import { MotiView} from "moti";
 import SearchLocationInput from "./SearchLocation/SearchLocationInput";
 import SearchResults from "./SearchLocation/SearchResults";
 import NewPrices from "./NewPrice/NewPrices";
@@ -17,7 +17,7 @@ const { height: windowHeight, width } = Dimensions.get("window");
 
 const AnimatableBox = ({ navigation }: Props) => {
   const [isInputActive, setIsInputActive] = useState(false);
-  const [showNewTrip, setShowNewTrip] = useState<boolean>(false);
+  const {showNewTrip, setShowNewTrip} = useAppStore()
   const { activeTrip } = useAppStore();
   const {
     mutate: mutatePlaceBaseSearch,

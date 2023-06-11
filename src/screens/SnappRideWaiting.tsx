@@ -9,6 +9,7 @@ import {
 } from "../ReactQuery/SnappRequestHooks";
 import { ActivityIndicator } from "react-native";
 import classNames from "classnames";
+import { trpc } from "../../utils/trpc";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -16,7 +17,7 @@ type Props = {
 
 const SnappRideWaiting = ({ navigation }: Props) => {
   const [gif, setGif] = useState();
-  const { activeTrip, setActiveTrip } = useAppStore();
+  const { activeTrip, setActiveTrip, zipwayRideId } = useAppStore();
 
   const {
     refetchSnappEvent,
@@ -28,8 +29,14 @@ const SnappRideWaiting = ({ navigation }: Props) => {
     snappCancelWaitingData,
     isSnappCancelWaitingSuccess,
     mutateSnappCancelWaiting,
-    isSnappCancelWaitingLoading
+    isSnappCancelWaitingLoading,
   } = useSnappCancelWaiting();
+
+  const {
+    isLoading: isUpdateRideLoading,
+    mutate: mutateUpdateRide,
+    data: updateRideData,
+  } = trpc.ride.updateRide.useMutation();
 
   useEffect(() => {
     if (activeTrip?.provider === "snapp") {
@@ -48,6 +55,7 @@ const SnappRideWaiting = ({ navigation }: Props) => {
 
   useEffect(() => {
     if (isSnappCancelWaitingSuccess) {
+      mutateUpdateRide({ rideId: zipwayRideId, status: "CANCELLED" });
       console.log("snappCancelWaitingData", snappCancelWaitingData);
       setActiveTrip(null);
       navigation.navigate("MapScreen");
@@ -58,6 +66,43 @@ const SnappRideWaiting = ({ navigation }: Props) => {
         snappEventData?.data?.events[0]?.type
       );
     if (snappEventData?.data?.events[0]?.type === "driver_accepted_ride") {
+      mutateUpdateRide({
+        rideId: zipwayRideId,
+        status: "ACCEPTED",
+        trip: {
+          accepted: true,
+          price: snappEventData?.data?.events[0]?.data.ride_info.final_price,
+          provider: "SNAPP",
+          tripId:activeTrip.tripId,
+          type: activeTrip.type,
+          driverInfo: {
+            cellphone: snappEventData?.data?.events[0]?.data.driver.cellphone,
+            driver_name:
+              snappEventData?.data?.events[0]?.data.driver.driver_name,
+            image_url: snappEventData?.data?.events[0]?.data.driver.image_url,
+            plate: {
+              character:
+                snappEventData?.data?.events[0]?.data.driver.plate.character,
+              iran_id:
+                snappEventData?.data?.events[0]?.data.driver.plate.iran_id,
+              part_a: snappEventData?.data?.events[0]?.data.driver.plate.part_a,
+              part_b: snappEventData?.data?.events[0]?.data.driver.plate.part_b,
+            },
+            driver_location_info: {
+              lat: snappEventData?.data?.events[0]?.data.driver_location_info
+                .lat,
+              lng: snappEventData?.data?.events[0]?.data.driver_location_info
+                .lng,
+            },
+            plate_number_url:
+              snappEventData?.data?.events[0]?.data.driver.plate_number_url,
+            vehicle_color:
+              snappEventData?.data?.events[0]?.data.driver.vehicle_color,
+            vehicle_model:
+              snappEventData?.data?.events[0]?.data.driver.vehicle_model,
+          },
+        },
+      });
       setActiveTrip({
         accepted: true,
         driverInfo: {
@@ -113,16 +158,22 @@ const SnappRideWaiting = ({ navigation }: Props) => {
         ) : null}
       </View>
       <Pressable
-      disabled={isSnappCancelWaitingLoading}
-        className={classNames("  px-4 py-2 rounded-[13px] w-full h-12 items-center justify-center ", 
-        isSnappCancelWaitingLoading ? "bg-gray-100" : "bg-white border border-[#e83b4f]")}
+        disabled={isSnappCancelWaitingLoading}
+        className={classNames(
+          "  px-4 py-2 rounded-[13px] w-full h-12 items-center justify-center ",
+          isSnappCancelWaitingLoading
+            ? "bg-gray-100"
+            : "bg-white border border-[#e83b4f]"
+        )}
         onPress={() => mutateSnappCancelWaiting(activeTrip.tripId)}
       >
         {isSnappCancelWaitingLoading ? (
-            <ActivityIndicator size={"small"} color={"#5e5e5e"} />
-          ) : (
-            <Text className="text-[#e83b4f]  font-[IRANSansMedium] text-[13px]">لغو درخواست</Text>
-          )}
+          <ActivityIndicator size={"small"} color={"#5e5e5e"} />
+        ) : (
+          <Text className="text-[#e83b4f]  font-[IRANSansMedium] text-[13px]">
+            لغو درخواست
+          </Text>
+        )}
       </Pressable>
     </View>
   );

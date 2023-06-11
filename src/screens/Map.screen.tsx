@@ -16,6 +16,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as NavigationBar from "expo-navigation-bar";
 import { WalletIcon } from "../components/Svgs";
 import splitNumber from "../../utils/splitNumber";
+import CompareServiceButton from "../components/CompareServiceButton";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -50,7 +51,9 @@ const MapScreen = ({ navigation }: Props) => {
               <View>
                 <WalletIcon classStyle="w-5 h-5 " />
               </View>
+              
             </Pressable>
+            <CompareServiceButton  />
           </>
         ) : (
           <View className="flex-1 justify-center items-center bg-transparent">

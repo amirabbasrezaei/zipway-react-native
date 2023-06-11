@@ -15,6 +15,7 @@ import { useTapsiRide } from "../../../ReactQuery/tapsiRequestHooks";
 import { useAppStore } from "../../../stores/appStore";
 import { RouteCoordinate } from "../../../stores/mapStore";
 import classNames from "classnames";
+import { trpc } from "../../../../utils/trpc";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -37,6 +38,7 @@ type Props = {
   setRequestButton: (e: RequestButton) => void;
   requestButton: RequestButton;
   selected: boolean;
+  commission: number;
 };
 
 const TapsiPriceItem = ({
@@ -52,9 +54,15 @@ const TapsiPriceItem = ({
   categoryType,
   setRequestButton,
   requestButton,
-  selected
+  selected,
+  commission,
 }: Props) => {
-  const { setActiveTrip, activeTrip } = useAppStore();
+  const { setActiveTrip, activeTrip, zipwayRideId } = useAppStore();
+  const {
+    isLoading: isUpdateRideLoading,
+    mutate: mutateUpdateRide,
+    data: updateRideData,
+  } = trpc.ride.updateRide.useMutation();
   const {
     isTapsiRideSucceed,
     tapsiRideData,
@@ -103,18 +111,35 @@ const TapsiPriceItem = ({
   }, [tapsiRideData]);
 
   useEffect(() => {
-    if (
-      selected
-    ) {
+    if (selected) {
       setRequestButton({
         name: name,
         type: serviceType,
         category: categoryType,
-        isLoading: isTapsiRideLoading,
-        mutateRideFunction: () => mutateTapsiRide(requestRideBody)
-      })
+        isLoading: isTapsiRideLoading || isUpdateRideLoading,
+        mutateRideFunction: () =>
+          mutateUpdateRide({
+            rideId: zipwayRideId,
+            status: "FINDING_DRIVER",
+            trip: {
+              accepted: false,
+              categoryType,
+              numberOfPassengers: 1,
+              price,
+              provider: "TAPSI",
+              type: serviceType,
+            },
+          }),
+        commission,
+      });
     }
-  }, [selected,  isTapsiRideLoading]);
+  }, [selected, isTapsiRideLoading]);
+
+  useEffect(() => {
+    if(updateRideData?.result == "OK"){
+      mutateTapsiRide(requestRideBody)
+    }
+  }, [updateRideData]);
 
   return (
     <>
@@ -124,8 +149,21 @@ const TapsiPriceItem = ({
             name: name,
             type: serviceType,
             category: categoryType,
-            mutateRideFunction: () => mutateTapsiRide(requestRideBody),
-            isLoading: isTapsiRideLoading
+            mutateRideFunction: () =>
+              mutateUpdateRide({
+                rideId: zipwayRideId,
+                status: "FINDING_DRIVER",
+                trip: {
+                  accepted: false,
+                  categoryType,
+                  numberOfPassengers: 1,
+                  price,
+                  provider: "TAPSI",
+                  type: serviceType,
+                },
+              }),
+            isLoading: isTapsiRideLoading || isUpdateRideLoading,
+            commission,
           })
         }
       >
