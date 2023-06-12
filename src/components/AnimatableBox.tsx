@@ -1,7 +1,7 @@
-import { Dimensions} from "react-native";
+import { Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useMapStore } from "../stores/mapStore";
-import { MotiView} from "moti";
+import { MotiView } from "moti";
 import SearchLocationInput from "./SearchLocation/SearchLocationInput";
 import SearchResults from "./SearchLocation/SearchResults";
 import NewPrices from "./NewPrice/NewPrices";
@@ -17,7 +17,7 @@ const { height: windowHeight, width } = Dimensions.get("window");
 
 const AnimatableBox = ({ navigation }: Props) => {
   const [isInputActive, setIsInputActive] = useState(false);
-  const {showNewTrip, setShowNewTrip} = useAppStore()
+  const { showNewTrip, setShowNewTrip } = useAppStore();
   const { activeTrip } = useAppStore();
   const {
     mutate: mutatePlaceBaseSearch,
@@ -40,7 +40,7 @@ const AnimatableBox = ({ navigation }: Props) => {
           longitude: String(cameraLocation[0]),
         });
       }
-    }, 100);
+    }, 50);
     return () => {
       clearTimeout(timeOut);
     };
@@ -53,10 +53,9 @@ const AnimatableBox = ({ navigation }: Props) => {
   }, [placeBaseSearchData]);
 
   return (
-
     <>
-    {/* <View style={{ zIndex:20}} className="bg-black h-6 w-6 absolute top-0 right-0"><Text>dgsfv</Text></View> */}
-    {/* <SafeAreaView style={!showNewTrip ? { zIndex:5, elevation: 5} : null} className="flex-1 w-full h-full"> */}
+      {/* <View style={{ zIndex:20}} className="bg-black h-6 w-6 absolute top-0 right-0"><Text>dgsfv</Text></View> */}
+      {/* <SafeAreaView style={!showNewTrip ? { zIndex:5, elevation: 5} : null} className="flex-1 w-full h-full"> */}
       <MotiView
         transition={{ type: "timing", duration: 200 }}
         animate={{
@@ -72,17 +71,25 @@ const AnimatableBox = ({ navigation }: Props) => {
               !showNewTrip
             ? 70
             : 130,
-          bottom: activeTrip?.accepted
-            ? 0
+          top: activeTrip?.accepted
+            ? windowHeight
             : isInputActive ||
               (routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
                 showNewTrip)
             ? 0
-            : 20,
+            : windowHeight - 150,
+          bottom:
+            activeTrip?.accepted ||
+            isInputActive ||
+            (routeCoordinate?.destination &&
+              routeCoordinate?.origin &&
+              showNewTrip)
+              ? 0
+              : 20,
         }}
-        className="absolute flex left-0 right-0 z-10 justify-center items-center drop-shadow-lg "
-        style={{  zIndex: 4, elevation: 4 }}
+        className="absolute flex left-0 right-0 z-10 justify-center items-center  "
+        style={{ zIndex: 4, elevation: 4 }}
         children={
           <MotiView
             transition={{ type: "timing", duration: 200 }}
@@ -103,7 +110,8 @@ const AnimatableBox = ({ navigation }: Props) => {
                 isInputActive ||
                 (routeCoordinate?.destination &&
                   routeCoordinate?.origin &&
-                  showNewTrip) || activeTrip?.accepted
+                  showNewTrip) ||
+                activeTrip?.accepted
                   ? 0
                   : routeCoordinate?.destination &&
                     routeCoordinate?.origin &&
@@ -117,13 +125,13 @@ const AnimatableBox = ({ navigation }: Props) => {
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.5,
+              shadowOpacity: 0.1,
               elevation:
                 routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
                 !showNewTrip
                   ? 0
-                  : 4,
+                  : 2,
               backgroundColor:
                 routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
@@ -161,9 +169,8 @@ const AnimatableBox = ({ navigation }: Props) => {
           />
         }
       />
-      
-     {/* </SafeAreaView>  */}
-    
+
+      {/* </SafeAreaView>  */}
     </>
   );
 };

@@ -64,20 +64,14 @@ const SnappPriceItem = ({
 
   useEffect(() => {
     if (isSnappNewRideSuccess) {
-      mutateUpdateRide({rideId: zipwayRideId, status: "FINDING_DRIVER", trip: {
-        accepted: false,
-        provider: "SNAPP",
-        numberOfPassengers: 1,
-        price,
-        tripId: snappNewRideData["data"]["ride_id"],
-        type: serviceType
-      }})
       setActiveTrip({
         provider: "snapp",
         accepted: false,
         type: serviceType,
         tripId: snappNewRideData["data"]["ride_id"],
       });
+     
+      
       navigation.navigate("SnappRideWaiting");
     }
   }, [isSnappNewRideSuccess]);
@@ -97,16 +91,34 @@ const SnappPriceItem = ({
     service_type: Number(serviceType),
   };
 
-  // useEffect(() => {
-  //   if (selected) {
-  //     setRequestButton({
-  //       name: name,
-  //       type: serviceType,
-  //       isLoading: isSnappNewRideLoading,
-  //       mutateRideFunction: () => mutateSnappNewRide(NewRideBody),
-  //     });
-  //   }
-  // }, [selected, isSnappNewRideLoading]);
+  useEffect(() => {
+    if (selected) {
+      setRequestButton({
+        name: name,
+        type: serviceType,
+        mutateRideFunction: () =>
+          mutateUpdateRide({
+            rideId: zipwayRideId,
+            status: "FINDING_DRIVER",
+            trip: {
+              accepted: false,
+              numberOfPassengers: 1,
+              price,
+              provider: "SNAPP",
+              type: serviceType,
+            },
+          }),
+        isLoading: isSnappNewRideLoading || isUpdateRideLoading,
+        commission,
+      })
+    }
+  }, [selected, isSnappNewRideLoading, isUpdateRideLoading]);
+
+  useEffect(() => {
+    if(updateRideData?.result == "OK"){
+      mutateSnappNewRide(NewRideBody)
+    }
+  }, [updateRideData]);
 
   return (
     <Pressable
@@ -122,7 +134,7 @@ const SnappPriceItem = ({
                 accepted: false,
                 numberOfPassengers: 1,
                 price,
-                provider: "TAPSI",
+                provider: "SNAPP",
                 type: serviceType,
               },
             }),

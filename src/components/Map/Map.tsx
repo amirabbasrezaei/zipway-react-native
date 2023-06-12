@@ -4,7 +4,7 @@ import {
   Dimensions,
   BackHandler,
 } from "react-native";
-import * as Location from "expo-location";
+
 import MapboxGL, { Camera } from "@rnmapbox/maps";
 import { useCallback, useContext, useEffect, useRef } from "react";
 import classNames from "classnames";
@@ -34,7 +34,7 @@ const Map = ({}: Props) => {
   const { setFocusState } = useContext(FocusContext);
 
   const { appConfig } = useZipwayConfigStore();
-  const { mutateSnappedPoint, snappedPointData } = useSnappedPoint();
+  const { mutateSnappedPoint, snappedPointData, isSnappedPointLoading } = useSnappedPoint();
   const { activeTrip } = useAppStore();
 
   const camera = useRef<Camera>(null);
@@ -42,7 +42,6 @@ const Map = ({}: Props) => {
     setCameraLocation,
     routeCoordinate,
     searchedLocationCoordinate,
-    setSearchLocationInput,
     setRouteCoordinate,
     setSearchedLocationCoordinate,
     userLocation,
@@ -101,7 +100,7 @@ const Map = ({}: Props) => {
     if (!routeCoordinate?.destination) {
       const timeOut = setTimeout(() => {
         mutateSnappedPoint(cameraLocation);
-      }, 300);
+      }, 100);
       return () => {
         clearTimeout(timeOut);
       };
@@ -152,7 +151,7 @@ const Map = ({}: Props) => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (searchedLocationCoordinate?.length && !routeCoordinate?.destination) {
+      if (searchedLocationCoordinate?.length && !routeCoordinate?.destination && !isSnappedPointLoading ) {
         camera.current?.setCamera({
           animationMode: "moveTo",
           centerCoordinate: searchedLocationCoordinate,
@@ -185,20 +184,12 @@ const Map = ({}: Props) => {
       if (appConfig?.banner) {
         setFocusState({
           focusComonent: <Banner banner={appConfig.banner} />,
-          exitAfterPress: appConfig.banner.canGoBack,
+          exitAfterPress: appConfig.banner.canClose,
         });
       }
 
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({});
-        setUserLocation(location);
-      })();
-    }, [appConfig, Location])
+      
+    }, [appConfig])
   );
 
   useEffect(() => {
@@ -246,9 +237,10 @@ const Map = ({}: Props) => {
         scaleBarEnabled={false}
         
           logoEnabled={false}
-          onRegionIsChanging={(e) => {
+          onRegionDidChange={(e) => {
             setCameraLocation(e.geometry.coordinates);
           }}
+
           // onRegionDidChange={(e) => {
           //   // setAddressForLocationInput(
           //   //   e.geometry.coordinates,
@@ -260,19 +252,20 @@ const Map = ({}: Props) => {
         >
           <MapboxGL.Camera ref={camera} />
           <RenderAnnotations routeCoordinate={routeCoordinate} />
-          <MapboxGL.UserLocation />
+          <MapboxGL.UserLocation onUpdate={(e) => setUserLocation(e)} />
         </MapboxGL.MapView>
       </View>
-      {!activeTrip ? (
+      
         <UserLocation
           routeCoordinate={routeCoordinate}
           moveToUserLocation={moveToUserLocation}
         />
-      ) : null}
+  
       <MapMarker routeCoordinate={routeCoordinate} />
       <MapBackButton
         backButtonFn={backButtonFn}
         routeCoordinate={routeCoordinate}
+        setRouteCoordinate={setRouteCoordinate}
       />
     </MotiView>
   );

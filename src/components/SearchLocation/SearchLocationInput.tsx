@@ -90,20 +90,16 @@ const SearchLocationInput = ({
         {!routeCoordinate?.origin ? (
           <View
             className={classNames(
-              " w-full flex-1 mt-2 relative items-center",
-              isInputActive ? "h-[56px]" : "h-12"
+              "h-12 w-full flex-1 mt-2 relative"
             )}
           >
             <TextInput
               placeholder="مبدا ..."
               className={classNames(
-                "appearance-none  w-full   flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 pr-4 pl-12 rounded-[16px] text-[20]   ",
+                "appearance-none  w-full bg-slate-50 flex-1 placeholder:font-[IRANSansMedium]  font-[IRANSansLight]  shadow-none h-12 pr-4 pl-12 rounded-[16px] text-[20]",
                 routeCoordinate?.originTitle
                   ? "text-gray-500 "
-                  : "text-gray-800 ",
-                isInputActive
-                  ? "h-[56px] w-[95%] border border-gray-200 bg-none"
-                  : "h-[20px] w-[100%] bg-gray-50"
+                  : "text-gray-800 "
               )}
               value={
                 routeCoordinate?.originTitle

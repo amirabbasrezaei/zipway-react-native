@@ -73,7 +73,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
         let filteredData: Array<any> = [];
         tapsiNewPriceData?.data["categories"].map((category) => {
           return category?.services?.map((service) => {
-            // console.log(service);
+            
             filteredData.push({
               type: service.key,
               price: service.prices[0]?.passengerShare
@@ -109,8 +109,6 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
       setUserState("isAuthorized");
     }
   }, [updateRideData]);
-
-  updateRideData && console.log(updateRideData.commission)
 
   return (
     <View className="mt-8  h-fit">
@@ -150,7 +148,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
           </MotiView>
         ) : (
           <>
-            {updateRideData ? tapsiNewPriceData?.data["categories"].map((category) => (
+            {updateRideData?.commission ? tapsiNewPriceData?.data["categories"].map((category) => (
               <View key={category.key} className="mt-5">
                 <Text className="font-[IRANSansMedium] mb-3 mr-3 text-gray-500">
                   {category.title}
@@ -177,7 +175,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                               serviceType={tapsiInitPassengerSeriveKey}
                               routeCoordinate={routeCoordinate}
                               navigation={navigation}
-                              commission={updateRideData.commission}
+                              commission={updateRideData.commission.tapsi[category.key + tapsiInitPassengerSeriveKey].amount}
                               name={tapsiInitPassengerSerivce.title}
                               price={service.prices[0]?.passengerShare}
                               iconUrl={tapsiInitPassengerSerivce.iconUrl}

@@ -8,6 +8,7 @@ import {
   ViewStyle,
   ImageStyle,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import * as Application from "expo-application";
 import React, { useEffect, useState } from "react";
@@ -20,7 +21,7 @@ import {
 import { useZipwayConfigStore } from "../../stores/zipwayConfigStore";
 import { trpc } from "../../../utils/trpc";
 import { useAppStore } from "../../stores/appStore";
-import { MinusIcon, PlusIcon, WalletIcon } from "../Svgs";
+import { ArrowRightIcon, MinusIcon, PlusIcon, WalletIcon } from "../Svgs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import classNames from "classnames";
 
@@ -28,6 +29,7 @@ import { TextStyle } from "react-native";
 import splitNumber from "../../../utils/splitNumber";
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
+  goToPayment: boolean
 };
 
 enum AccountState {
@@ -44,7 +46,7 @@ const transition: MotiTransitionProp<
   duration: 300,
 };
 
-const Account = ({ navigation }: Props) => {
+const Account = ({ navigation , goToPayment}: Props) => {
   const { appConfig } = useZipwayConfigStore();
   const [priceAmount, setPriceAmount] = useState<string>(
     String(appConfig.appInfo.minCreatePayment)
@@ -87,7 +89,50 @@ const Account = ({ navigation }: Props) => {
     }
   }, [priceAmount]);
 
+  useEffect(() => {
+    if(goToPayment){
+      setAccountState(AccountState.PAYMENT)
+    }
+  }, [goToPayment])
+
+  useEffect(() => {
+    const backAction = () => {
+      if(accountState == AccountState.ACCOUNT_INFO){
+        navigation.goBack()
+        return true
+      }
+      if(accountState == AccountState.PAYMENT){
+        setAccountState(AccountState.ACCOUNT_INFO)
+
+      }
+      
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
+
+    <View className="gap-y-10 flex flex-col">
+       <View className="h-[60] bg-white   justify-center items-center relative mb-[40] w-full">
+        <Pressable
+          hitSlop={10}
+          onPress={() => {
+            accountState == AccountState.ACCOUNT_INFO ? navigation.goBack() : setAccountState(AccountState.ACCOUNT_INFO)
+          }}
+          className="absolute right-4"
+        >
+          <ArrowRightIcon classStyle=" fill-gray-700 w-6 h-6 " />
+        </Pressable>
+        <Text className="font-[IRANSansMedium] text-gray-700 text-[16px]">
+          حساب کاربری
+        </Text>
+      </View>
     <MotiView
       animate={
         {
@@ -314,6 +359,7 @@ const Account = ({ navigation }: Props) => {
         <Text>افزایش اعتبار</Text>
       </Pressable> */}
     </MotiView>
+    </View>
   );
 };
 

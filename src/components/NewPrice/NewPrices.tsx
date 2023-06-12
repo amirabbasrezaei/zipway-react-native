@@ -69,7 +69,7 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
         </View>
         {/* {Array.from({length: 20}, (e, index) => index).map((e) => <View  key={e} className="h-14 w-full bg-black mt-10"></View>)} */}
       </ScrollView>
-      <RequestServiceButton navigation={} requestButton={requestButton} />
+      <RequestServiceButton navigation={navigation} requestButton={requestButton} />
     </View>
   );
 };

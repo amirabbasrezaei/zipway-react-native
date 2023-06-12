@@ -131,9 +131,10 @@ const TapsiPriceItem = ({
             },
           }),
         commission,
+
       });
     }
-  }, [selected, isTapsiRideLoading]);
+  }, [selected, isTapsiRideLoading, isUpdateRideLoading]);
 
   useEffect(() => {
     if(updateRideData?.result == "OK"){

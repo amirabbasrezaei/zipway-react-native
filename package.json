@@ -9,8 +9,6 @@
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.1",
-    "@legendapp/motion": "^2.2.0",
     "@mapbox/maki": "^8.0.0",
     "@react-native-masked-view/masked-view": "0.2.8",
     "@react-navigation/material-top-tabs": "^6.5.3",
@@ -41,7 +39,6 @@
     "fiction-expo-restart": "^2.0.0",
     "flowbite": "^1.5.5",
     "flowbite-react": "^0.3.7",
-    "graphql": "^16.6.0",
     "moti": "^0.25.3",
     "nativewind": "^2.0.11",
     "react": "^18.2.0",
@@ -50,7 +47,6 @@
     "react-native": "^0.71.8",
     "react-native-linear-gradient": "^2.6.2",
     "react-native-otp-verify": "^1.1.4",
-    "react-native-reanimated": "~2.12.0",
     "react-native-safe-area-context": "4.4.1",
     "react-native-screens": "~3.18.0",
     "react-native-skeleton-placeholder": "^5.2.4",
@@ -64,7 +60,7 @@
     "@graphql-codegen/cli": "2.14.1",
     "@graphql-codegen/client-preset": "1.2.0",
     "@graphql-codegen/introspection": "2.2.1",
-    "@types/graphql": "^14.5.0",
+    "@tc": "^14.5.0",
     "@types/react": "^18.0.24",
     "@types/react-native": "^0.70.6",
     "apollo": "^2.34.0",

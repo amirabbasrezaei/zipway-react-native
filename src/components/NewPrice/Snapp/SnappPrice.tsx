@@ -93,28 +93,13 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
     snappNewPriceFailureReason,
   } = useSnappNewPrice();
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
-    if (snappAuthKey && newSnappPriceData?.data && zipwayRideId) {
-      // mutateUpdateRide({
-      //   rideId: zipwayRideId,
-      //   status: "NOT_INITIATED",
-      //   snappPrices: services.map((service) => ({
-      //     serviceType: service?.type,
-      //     price: newSnappPriceData?.data?.prices
-      //       ? newSnappPriceData.data.prices.filter(
-      //           (item) => item?.type === service?.type
-      //         )[0].final / 10
-      //       : null,
-      //   })),
-      // });
-      setUserState("isAuthorized");
+    if(updateRideData?.result == "OK"){
+      setUserState("isAuthorized")
     }
-    if (isSnappNewPriceError) {
-      setUserState("isNotAuthorized");
-    }
-  }, [isSnappNewPriceSucceed, isSnappNewPriceError]);
+  }, [updateRideData]);
+
+  
 
   useEffect(() => {
     mutateSnappService(snappServiceTypesBody);
@@ -127,7 +112,28 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
       category.services.map((service) => service)
     );
 
-  services = services && [].concat(services[0], services[1], services[2]);
+  services = services && [].concat(services[0], services[1], services[2]).filter((service) => service !== undefined );
+
+  useEffect(() => {
+    if (snappAuthKey && services?.length && zipwayRideId) {
+      mutateUpdateRide({
+        rideId: zipwayRideId,
+        status: "NOT_INITIATED",
+        snappPrices: services.map((service) => ({
+          type: service?.type,
+          price: newSnappPriceData?.data?.prices
+            ? newSnappPriceData.data.prices.filter(
+                (item) => item?.type === service?.type
+              )[0]?.final / 10
+            : null,
+        })),
+      });
+      
+    }
+    if (isSnappNewPriceError) {
+      setUserState("isNotAuthorized");
+    }
+  }, [isSnappNewPriceSucceed, isSnappNewPriceError]);
 
   return (
     <View className="mt-4">
@@ -163,10 +169,12 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
           </MotiView>
         ) : (
           <>
-            {services?.length &&
+            {updateRideData?.commission && services?.length &&
               services.map((service) => (
                 <SnappPriceItem
-                  commission={updateRideData.commission}
+                  commission={
+                    updateRideData.commission?.snapp[service.type]?.amount
+                  }
                   requestButton={requestButton}
                   selected={requestButton?.type == service?.type}
                   key={service?.type}
@@ -180,8 +188,8 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
                     newSnappPriceData?.data?.prices
                       ? newSnappPriceData?.data?.prices.filter(
                           (item) => item?.type === service?.type
-                        )[0].final / 10
-                      : 1000
+                        )[0]?.final / 10
+                      : null
                   }
                 />
               ))}

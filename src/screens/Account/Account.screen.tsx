@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { trpc } from "../../../utils/trpc";
 import Account from "../../components/account/Account";
 import { ArrowRightIcon } from "../../components/Svgs";
+import { SafeAreaView } from "moti";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -22,19 +23,8 @@ const AccountScreen = ({ navigation }: Props) => {
 
   const params =
     navigation?.getState()?.routes[navigation.getState().index]?.params;
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
+  
 
   useEffect(() => {
     if (params?.status) {
@@ -45,6 +35,8 @@ const AccountScreen = ({ navigation }: Props) => {
       });
     }
   }, [params]);
+
+  
 
   error && console.log("error", error);
 
@@ -65,23 +57,10 @@ const AccountScreen = ({ navigation }: Props) => {
   }, [inquiryPaymentData]);
   console.log(params);
   return (
-    <View className="gap-y-10 flex flex-col">
-      <View className="h-[60] bg-white   justify-center items-center relative mb-[40] w-full">
-        <Pressable
-          hitSlop={10}
-          onPress={() => {
-            navigation.goBack();
-          }}
-          className="absolute right-4"
-        >
-          <ArrowRightIcon classStyle=" fill-gray-700 w-6 h-6 " />
-        </Pressable>
-        <Text className="font-[IRANSansMedium] text-gray-700 text-[16px]">
-          حساب کاربری
-        </Text>
-      </View>
-      <Account navigation={navigation} />
-    </View>
+    <SafeAreaView className="">
+   
+      <Account goToPayment={params?.goToPayment} navigation={navigation} />
+    </SafeAreaView>
   );
 };
 

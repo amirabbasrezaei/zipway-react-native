@@ -6,7 +6,7 @@ import * as Application from "expo-application";
 import { useAuthenticateStore } from "../stores/authenticateStore";
 
 export function useSnappedPoint() {
-  const { mutate: mutateSnappedPoint, data: snappedPointData } = useMutation({
+  const { mutate: mutateSnappedPoint, data: snappedPointData, isLoading: isSnappedPointLoading } = useMutation({
     mutationFn: (input: number[]) => {
       const dataToSend = {
         formatted_address: 1,
@@ -22,6 +22,7 @@ export function useSnappedPoint() {
   return {
     mutateSnappedPoint,
     snappedPointData,
+    isSnappedPointLoading
   };
 }
 

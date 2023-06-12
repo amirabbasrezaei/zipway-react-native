@@ -105,7 +105,7 @@ const TapsiNewRide = ({ navigation }: Props) => {
       </View>
       <View className="w-full flex felx-row items-start justify-center">
         <Text className="font-[IRANSansMedium]">
-          {splitNumber(String(activeTrip.price / 10))} تومان
+          {splitNumber(String(activeTrip.price ))} تومان
         </Text>
       </View>
       <Pressable

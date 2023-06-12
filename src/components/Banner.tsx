@@ -2,6 +2,7 @@ import { View, Text, Image, Pressable } from "react-native";
 import React, { useContext } from "react";
 import { FocusContext } from "./FocusComponent";
 import { XMarkIcon } from "./Svgs";
+import type { ZipwayConfigPayload } from "../../../zipway-server/src/controllers/app.controller";
 
 type BannerType = {
   message: string;
@@ -11,7 +12,7 @@ type BannerType = {
 };
 
 type Props = {
-  banner: BannerType;
+  banner: ZipwayConfigPayload["banner"];
 };
 
 const Banner = ({ banner }: Props) => {

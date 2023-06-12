@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Map from "../components/Map/Map";
 import AnimatableBox from "../components/AnimatableBox";
 
@@ -39,7 +39,7 @@ const MapScreen = ({ navigation }: Props) => {
             <Map />
             <AnimatableBox navigation={navigation} />
             <Pressable
-              onPress={() => navigation.navigate("NoNetwork")}
+              onPress={() => navigation.navigate("Account")}
               style={{ elevation: 2, zIndex: 2 }}
               className="w-fit px-4 h-10 flex gap-x-2 flex-row bg-white absolute top-5 left-5 rounded-2xl items-center justify-center "
             >
@@ -49,7 +49,7 @@ const MapScreen = ({ navigation }: Props) => {
                 </Text>
               </View>
               <View>
-                <WalletIcon classStyle="w-5 h-5 " />
+                <WalletIcon classStyle="w-5 h-5" />
               </View>
               
             </Pressable>

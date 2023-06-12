@@ -1,3 +1,4 @@
+import MapboxGL from "@rnmapbox/maps";
 import { LocationObject } from "expo-location";
 import create from "zustand";
 
@@ -21,7 +22,7 @@ interface MapStoreType {
   setSearchedLocationCoordinate: (
     input: MapStoreType["cameraLocation"]
   ) => void;
-  userLocation: LocationObject | null;
+  userLocation: MapboxGL.Location | null;
   setUserLocation: (input: MapStoreType["userLocation"]) => void;
   // showNewTrip
 }
