@@ -1,8 +1,7 @@
-/node_modules
+node_modules
 .env
 .expo
 .vscode
 .yarn
-yarn.lock
 yarn-error.log
 .yarnrc.yml
