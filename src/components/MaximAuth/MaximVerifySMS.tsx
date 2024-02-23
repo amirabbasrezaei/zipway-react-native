@@ -7,7 +7,6 @@ import {
   Image,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Motion } from "@legendapp/motion";
 import { ArrowLeftIcon, SnappTextIcon } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./MaximLoginModal";
 import classNames from "classnames";
@@ -21,6 +20,7 @@ import {
 } from "react-native-otp-verify";
 import { useVerifyMaximCode } from "../../ReactQuery/maximRequestHooks";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
+import { MotiView } from "moti";
 
 type Props = {
   step: StepState;
@@ -67,8 +67,8 @@ const MaximVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   }, [isVerifyMaximCodeSuccess]);
 
   return (
-    <Motion.View
-      initial={{ translateX: 300, opacity: 0.5 }}
+    <MotiView
+      from={{ translateX: 300, opacity: 0.5 }}
       animate={{ translateX: 0, opacity: 1 }}
       exit={{ translateX: -300, opacity: 0.5 }}
       onTouchStart={(e) => e.stopPropagation()}
@@ -150,7 +150,7 @@ const MaximVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
           <Text className="font-[IRANSansMedium] text-white">تائید</Text>
         )}
       </Pressable>
-    </Motion.View>
+    </MotiView>
   );
 };
 

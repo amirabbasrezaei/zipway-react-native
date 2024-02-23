@@ -8,7 +8,6 @@ import {
   BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Motion } from "@legendapp/motion";
 import { useSendTapsiVerifySMS } from "../../ReactQuery/tapsiRequestHooks";
 import { PhoneNumberInput, StepState } from "./SnappLoginModal";
 import { ArrowLeftIcon, LoadingSpinner, SnappTextIcon, XMarkIcon } from "../Svgs";
@@ -18,6 +17,7 @@ import {
   useSnappRequestVerifySms,
 } from "../../ReactQuery/SnappRequestHooks";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
+import { MotiView } from "moti";
 
 type Props = {
   step: StepState;
@@ -86,8 +86,9 @@ const SnappSignIn = ({
   }, [isSnappRequestVerifySmsSucceed]);
 
   return (
-    <Motion.View
-      initial={{ translateX: 300, opacity: 0.5 }}
+    <MotiView
+    transition={{type: "timing", duration: 300}}
+      from={{ translateX: 300, opacity: 0.5 }}
       animate={{ translateX: 0, opacity: 1 }}
       exit={{ translateX: -300, opacity: 0.5 }}
       onTouchStart={(e) => e.stopPropagation()}
@@ -138,7 +139,7 @@ const SnappSignIn = ({
           <Text className="font-[IRANSansMedium] text-white">ورود</Text>
         )}
       </Pressable>
-    </Motion.View>
+    </MotiView>
   );
 };
 

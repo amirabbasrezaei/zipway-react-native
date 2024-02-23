@@ -20,7 +20,7 @@ type Props = {
 const PriceItem = ({ name, price, isLoading = true, minMaxPrice, photoUrl }: Props) => {
 
   return (
-    <MotiView className="h-[70] w-full bg-white rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex">
+    <MotiView className="h-[70] w-full bg-white rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-300  justify-center flex">
       {isLoading || (!price && !minMaxPrice?.min) ? (
         <SkeletonPlaceholder  borderRadius={4} angle={90}>
           <SkeletonPlaceholder.Item

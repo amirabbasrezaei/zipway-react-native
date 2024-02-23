@@ -22,6 +22,7 @@ import PaymentSuccess from "./src/screens/Account/Payment/PaymentSuccess";
 import Logout from "./src/screens/Account/Logout";
 import TapsiRideWaiting from "./src/screens/TapsiRideWaiting.screen";
 import NoNetwork from "./src/screens/NoNetwork.screen";
+import { View, I18nManager } from "react-native";
 
 const queryClient = new QueryClient();
 
@@ -46,8 +47,6 @@ export default function App() {
   const { setMaximAuthKey, setPhoneNumber, setSnappAuthKey, setTapsiAuthKey } =
     useAuthenticateStore();
 
-
-
   /// setting user information in global state(zustand)
   useEffect(() => {
     (async () => {
@@ -71,7 +70,11 @@ export default function App() {
         setTapsiAuthKey(tapsiToken);
       }
     })();
+
+    
   }, []);
+
+  I18nManager.allowRTL(false)
 
   const MyTheme = {
     ...DefaultTheme,
@@ -92,125 +95,125 @@ export default function App() {
   };
 
   return (
-    <TRPCProvider queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <FocusComponentProvider>
-          {fontsLoaded ? (
-            <NavigationContainer
-              linking={linking}
-              theme={{
-                ...DefaultTheme,
-                colors: {
-                  ...DefaultTheme.colors,
-                  background: "white",
-                },
-              }}
-            >
-              <RootStack.Navigator
-                screenOptions={{ animation: "slide_from_right" }}
-                initialRouteName="AuthScreen"
-              >
-                {appConfig ? (
-                  <>
-                  
-                  <RootStack.Screen
-                      name="MapScreen"
-                      component={MapScreen}
-                      options={{
-                        title: "map",
-                        headerShown: false,
-                        animation: "fade_from_bottom",
-                      }}
-                    />
-                  <RootStack.Screen
-                      name="Account"
-                      component={AccountScreen}
-                      options={{
-                        title: "حساب کاربری",
-                        headerShown: false,
-                        animation: "flip",
-                      }}
-                    />
-                  <RootStack.Screen
-                      name="NoNetwork"
-                      component={NoNetwork}
-                      options={{
-                        title: "NoNetwork",
-                        headerShown: false,
-                        animation: "flip",
-                      }}
-                    />
-                    
-                    <RootStack.Screen
-                      name="SnappRideWaiting"
-                      component={SnappRideWaiting}
-                      options={{
-                        title: "SnappRideWaiting",
-                        headerShown: false,
-                        animation: "flip",
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="TapsiRideWaiting"
-                      component={TapsiRideWaiting}
-                      options={{
-                        title: "TapsiRideWaiting",
-                        headerShown: false,
-                        animation: "flip",
-                      }}
-                    />
-                    
-                    <RootStack.Screen
-                      name="Logout"
-                      component={Logout}
-                      options={{
-                        title: "خروج از حساب",
-                        headerShown: false,
-                        animation: "fade_from_bottom",
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="PaymentFailed"
-                      component={PaymentFailed}
-                      options={{
-                        title: "تراکنش ناموفق",
-                        headerShown: false,
-                        animation: "fade",
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="PaymentSuccess"
-                      component={PaymentSuccess}
-                      options={{
-                        title: "تراکنش موفق",
-                        headerShown: false,
-                        animation: "fade",
-                      }}
-                    />
-                    <RootStack.Screen
-                      name="PrivacyPolicy"
-                      component={PrivacyPolicy}
-                      options={{
-                        title: "PrivacyPolicy",
-                        headerShown: false,
-                        animation: "flip",
-                      }}
-                    />
-                  </>
-                ) : (
-                  <RootStack.Screen
-                    name="AuthScreen"
-                    component={AuthenticateScreen}
-                    options={{ title: "hi", headerShown: false, animation: "flip", }}
-                  />
-                )}
+    <View style={{flexDirection: 'row', flex:1}}>
+      <TRPCProvider queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <FocusComponentProvider>
+          
 
-                {/* <RootStack.Screen name="testLogin" component={TestAPIs} /> */}
-              </RootStack.Navigator>
-            </NavigationContainer>
-          ) : null}
-        </FocusComponentProvider>
-      </QueryClientProvider>
-    </TRPCProvider>
+            {fontsLoaded ? (
+              <NavigationContainer
+                linking={linking}
+                theme={{
+                  ...DefaultTheme,
+                  colors: {
+                    ...DefaultTheme.colors,
+                    background: "white",
+                  },
+                }}
+              >
+                <RootStack.Navigator
+                  screenOptions={{ animation: "slide_from_right" }}
+                  initialRouteName="AuthScreen"
+                >
+              
+                  {appConfig ? (
+                    <>
+                      <RootStack.Screen
+                        name="MapScreen"
+                        component={MapScreen}
+                        options={{
+                          title: "map",
+                          headerShown: false,
+                          animation: "fade_from_bottom",
+                        }}
+                      />
+                      <RootStack.Screen
+                        name="Account"
+                        component={AccountScreen}
+                        options={{
+                          title: "حساب کاربری",
+                          headerShown: false,
+                          animation: "flip",
+                        }}
+                      />
+                      
+
+                      <RootStack.Screen
+                        name="SnappRideWaiting"
+                        component={SnappRideWaiting}
+                        options={{
+                          title: "SnappRideWaiting",
+                          headerShown: false,
+                          animation: "flip",
+                        }}
+                      />
+                      <RootStack.Screen
+                        name="TapsiRideWaiting"
+                        component={TapsiRideWaiting}
+                        options={{
+                          title: "TapsiRideWaiting",
+                          headerShown: false,
+                          animation: "flip",
+                        }}
+                      />
+
+                      <RootStack.Screen
+                        name="Logout"
+                        component={Logout}
+                        options={{
+                          title: "خروج از حساب",
+                          headerShown: false,
+                          animation: "fade_from_bottom",
+                        }}
+                      />
+                      <RootStack.Screen
+                        name="PaymentFailed"
+                        component={PaymentFailed}
+                        options={{
+                          title: "تراکنش ناموفق",
+                          headerShown: false,
+                          animation: "fade",
+                        }}
+                      />
+                      <RootStack.Screen
+                        name="PaymentSuccess"
+                        component={PaymentSuccess}
+                        options={{
+                          title: "تراکنش موفق",
+                          headerShown: false,
+                          animation: "fade",
+                        }}
+                      />
+                      <RootStack.Screen
+                        name="PrivacyPolicy"
+                        component={PrivacyPolicy}
+                        options={{
+                          title: "PrivacyPolicy",
+                          headerShown: false,
+                          animation: "flip",
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <RootStack.Screen
+                      name="AuthScreen"
+                      component={AuthenticateScreen}
+                      options={{
+                        title: "hi",
+                        headerShown: false,
+                        animation: "flip",
+                      }}
+                    />
+                  )}
+
+                  {/* <RootStack.Screen name="testLogin" component={TestAPIs} /> */}
+                </RootStack.Navigator>
+              </NavigationContainer>
+            ) : null}
+          </FocusComponentProvider>
+        </QueryClientProvider>
+      </TRPCProvider>
+    </View>
   );
 }

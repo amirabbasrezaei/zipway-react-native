@@ -24,6 +24,7 @@ const AnimatableBox = ({ navigation }: Props) => {
     data: placeBaseSearchData,
     isSuccess: isPlaceBaseSearchSuccess,
   } = trpc.app.placeBaseSearch.useMutation();
+  
   const {
     searchLocationInput,
     setSearchLocationsResult,
@@ -40,7 +41,7 @@ const AnimatableBox = ({ navigation }: Props) => {
           longitude: String(cameraLocation[0]),
         });
       }
-    }, 50);
+    }, 100);
     return () => {
       clearTimeout(timeOut);
     };
@@ -57,7 +58,7 @@ const AnimatableBox = ({ navigation }: Props) => {
       {/* <View style={{ zIndex:20}} className="bg-black h-6 w-6 absolute top-0 right-0"><Text>dgsfv</Text></View> */}
       {/* <SafeAreaView style={!showNewTrip ? { zIndex:5, elevation: 5} : null} className="flex-1 w-full h-full"> */}
       <MotiView
-        transition={{ type: "timing", duration: 200 }}
+        transition={{ type: "timing", duration: 300 }}
         animate={{
           height: activeTrip?.accepted
             ? 300
@@ -72,7 +73,7 @@ const AnimatableBox = ({ navigation }: Props) => {
             ? 70
             : 130,
           top: activeTrip?.accepted
-            ? windowHeight
+            ? windowHeight - 300
             : isInputActive ||
               (routeCoordinate?.destination &&
                 routeCoordinate?.origin &&
@@ -92,7 +93,7 @@ const AnimatableBox = ({ navigation }: Props) => {
         style={{ zIndex: 4, elevation: 4 }}
         children={
           <MotiView
-            transition={{ type: "timing", duration: 200 }}
+            transition={{ type: "timing", duration: 300 }}
             animate={{
               width: activeTrip?.accepted
                 ? width

@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Motion } from "@legendapp/motion";
 import { FocusContext, UseFocusContextArgs } from "../FocusComponent";
 import { ArrowLeftIcon, LoadingSpinner } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./TapsiLoginModal";
@@ -16,6 +15,7 @@ import classNames from "classnames";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 import * as SecureStore from "expo-secure-store";
 import { BackHandler } from "react-native";
+import { MotiView } from "moti";
 
 
 type Props = {
@@ -73,8 +73,9 @@ const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   }, []);
 
   return (
-    <Motion.View
-      initial={{ translateX: 300, opacity: 0.5 }}
+    <MotiView
+    transition={{type: "timing", duration: 300}}
+      from={{ translateX: 300, opacity: 0.5 }}
       animate={{ translateX: 0, opacity: 1 }}
       exit={{ translateX: -300, opacity: 0.5 }}
       onTouchStart={(e) => e.stopPropagation()}
@@ -169,7 +170,7 @@ const TapsiVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
           <Text className="font-[IRANSansMedium] text-white">ورود</Text>
         )}
       </Pressable>
-    </Motion.View>
+    </MotiView>
   );
 };
 

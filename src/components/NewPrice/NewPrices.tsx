@@ -35,7 +35,7 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
   }, []);
 
   return (
-    <View className=" flex-1 bg-gray-50 relative">
+    <View className=" flex-1 bg-gray-50 relative ">
       <View className="h-[60px] bg-white  shadow-md shadow-gray-400 justify-center items-center relative">
         <Pressable
           hitSlop={10}
@@ -52,7 +52,7 @@ const NewPrices = ({ setShowNewTrip, navigation }: Props) => {
       </View>
       <ScrollView
         style={{ elevation: 10, zIndex: 10 }}
-        className="flex-1 w-full h-full "
+        className="flex-1 w-full h-full pb-10"
       >
         <View className="px-4 h-full  ">
           <SnappPrice

@@ -18,6 +18,7 @@ import {
 import { trpc } from "../../../utils/trpc";
 import { MotiView } from "moti";
 import CompareServiceButton from "../CompareServiceButton";
+import { MotiPressable } from "moti/interactions";
 
 type Props = {
   isInputActive: boolean;
@@ -37,6 +38,7 @@ const SearchLocationInput = ({
     cameraLocation,
     searchLocationInput,
     setRouteCoordinate,
+    isCameraChanging: isCameraChanging,
   } = useMapStore();
 
   const {
@@ -88,11 +90,7 @@ const SearchLocationInput = ({
         )}
       >
         {!routeCoordinate?.origin ? (
-          <View
-            className={classNames(
-              "h-12 w-full flex-1 mt-2 relative"
-            )}
-          >
+          <View className={classNames("h-12 w-full flex-1 mt-2 relative")}>
             <TextInput
               placeholder="مبدا ..."
               className={classNames(
@@ -121,23 +119,33 @@ const SearchLocationInput = ({
           </View>
         ) : null}
         {!isInputActive && !routeCoordinate?.origin ? (
-          <View
-            onTouchEnd={() => {
-              const route: RouteCoordinate = {
-                origin: cameraLocation,
-                originTitle: searchLocationInput,
-                destination: null,
-                destinationTitle: null,
-              };
-              setRouteCoordinate(route);
-              setSearchLocationInput("");
+          <MotiView
+            className={classNames(
+              "h-12 w-full  mt-[10]  rounded-[16px] flex items-center justify-center"
+            )}
+            animate={{
+              backgroundColor: isCameraChanging ? "#a1a1a1" : "#027de8",
             }}
-            className="h-12 mt-[10] w-full b bg-blue-500 rounded-[16px] flex items-center justify-center"
+            transition={{ type: "timing", duration: 100 }}
           >
-            <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
-              تائید مبدا
-            </Text>
-          </View>
+            <Pressable
+              onPress={() => {
+                const route: RouteCoordinate = {
+                  origin: cameraLocation,
+                  originTitle: searchLocationInput,
+                  destination: null,
+                  destinationTitle: null,
+                };
+                setRouteCoordinate(route);
+                setSearchLocationInput("");
+              }}
+              disabled={isCameraChanging}
+              className="flex-1 justify-center h-full w-full"
+            ><Text className="text-center font-[IRANSansMedium] text-[18] text-white">
+            تائید مبدا
+          </Text></Pressable>
+            
+          </MotiView>
         ) : null}
         {routeCoordinate?.origin && !routeCoordinate?.destination ? (
           <View className="h-12 w-full flex-1 mt-2 relative">
@@ -169,21 +177,37 @@ const SearchLocationInput = ({
         {!isInputActive &&
         routeCoordinate?.origin &&
         !routeCoordinate?.destination ? (
-          <View
-            onTouchEnd={() => {
-              const route: RouteCoordinate = {
-                ...routeCoordinate,
-                destination: cameraLocation,
-                destinationTitle: searchLocationInput,
-              };
-              setRouteCoordinate(route);
+          <MotiView
+            className={classNames(
+              "h-12 w-full  mt-[10]  rounded-[16px] flex items-center justify-center"
+            )}
+            animate={{
+              backgroundColor: isCameraChanging ? "#a1a1a1" : "#027de8",
             }}
-            className="h-12 w-full bg-blue-500 mt-[10]  rounded-[16px] flex items-center justify-center"
+            transition={{ type: "timing", duration: 100 }}
           >
-            <Text className="text-center font-[IRANSansMedium] text-[18] text-white">
-              تائید مقصد
-            </Text>
-          </View>
+            <Pressable
+              onPress={() => {
+                const route: RouteCoordinate = {
+                  ...routeCoordinate,
+                  destination: cameraLocation,
+                  destinationTitle: searchLocationInput,
+                };
+                setRouteCoordinate(route);
+              }}
+              disabled={isCameraChanging}
+              style={{
+                flexGrow: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              className="flex-1 justify-center h-full w-full"
+            >
+              <Text className="text-center  font-[IRANSansMedium] text-[18] text-white">
+                تائید مقصد
+              </Text>
+            </Pressable>
+          </MotiView>
         ) : null}
         {/* {routeCoordinate?.origin && routeCoordinate?.destination ? (
           <CompareServiceButton />

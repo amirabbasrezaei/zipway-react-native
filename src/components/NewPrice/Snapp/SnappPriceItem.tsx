@@ -145,7 +145,7 @@ const SnappPriceItem = ({
     >
       <MotiView
         className={classNames(
-          "h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex",
+          "h-[70] w-full   rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-300 justify-center flex",
           requestButton?.type == serviceType ? "bg-blue-200" : "bg-white"
         )}
       >

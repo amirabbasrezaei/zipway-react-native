@@ -1,4 +1,4 @@
-import create from "zustand";
+import {create} from "zustand";
 import type { ZipwayConfigPayload } from "../../../zipway-server/src/controllers/app.controller";
 
 // interface AppConfig{

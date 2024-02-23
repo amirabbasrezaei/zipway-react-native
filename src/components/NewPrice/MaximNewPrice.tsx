@@ -171,7 +171,7 @@ const MaximTrip = (props: Props) => {
         ) : (
           <>
             <PriceItem
-              name=""
+              name="ماکسیم"
               price={maximPriceData?.Price}
               onPress={() => null}
               isLoading={userState === "initial" || isMaximPriceLoading}

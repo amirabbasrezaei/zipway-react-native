@@ -1,5 +1,5 @@
-import { StatusBar, Text, View, Image } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import { StatusBar, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -14,7 +14,7 @@ import { trpc } from "../../utils/trpc";
 import ZipwayAuthScreen from "./ZipwayAuth.screen";
 import * as SplashScreen from "expo-splash-screen";
 import { useSnappConfigMutation } from "../ReactQuery/SnappRequestHooks";
-import {useQueryClient} from "@tanstack/react-query"
+
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -22,10 +22,7 @@ type Props = {
 
 const AuthStack = createNativeStackNavigator();
 const AuthenticateScreen = ({ navigation }: Props) => {
-  const client = useQueryClient
   const [appState, setAppState] = useState("LAUNCH");
-  const params =
-    navigation?.getState()?.routes[navigation.getState().index]?.params;
   const isFocused = useIsFocused();
   const { setAppConfig, appConfig } = useZipwayConfigStore();
   const { mutate: mutateAppLog } = trpc.app.log.useMutation();
@@ -64,13 +61,18 @@ const AuthenticateScreen = ({ navigation }: Props) => {
     (async () => {
       await SplashScreen.hideAsync();
     })();
-    if (zipwayConfigFailureReason?.data["httpStatus"] === 401) {
-      setAppState("UNAUTHENTICATED");
-      mutateAppLog({
-        error: zipwayConfigFailureReason?.data,
-        section: "AuthenticationScreen/zipwayErrorUseEffect",
-      });
+    try {
+      if (zipwayConfigFailureReason?.data["httpStatus"] === 401) {
+        setAppState("UNAUTHENTICATED");
+        mutateAppLog({
+          error: zipwayConfigFailureReason?.data,
+          section: "AuthenticationScreen/zipwayErrorUseEffect",
+        });
+      }
+    } catch (error) {
+      navigation.navigate("NoNetwork")
     }
+    
   }, [zipwayConfigError]);
 
   useEffect(() => {
@@ -99,7 +101,7 @@ const AuthenticateScreen = ({ navigation }: Props) => {
         </AuthStack.Navigator>
       ) : (
         <View>
-          <Text>fdsfg</Text>
+          <Text>Zipway</Text>
         </View>
       )}
     </>

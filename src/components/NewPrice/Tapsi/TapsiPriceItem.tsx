@@ -16,6 +16,7 @@ import { useAppStore } from "../../../stores/appStore";
 import { RouteCoordinate } from "../../../stores/mapStore";
 import classNames from "classnames";
 import { trpc } from "../../../../utils/trpc";
+import PriceLoading from "../PriceLoading";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -131,64 +132,49 @@ const TapsiPriceItem = ({
             },
           }),
         commission,
-
       });
     }
   }, [selected, isTapsiRideLoading, isUpdateRideLoading]);
 
   useEffect(() => {
-    if(updateRideData?.result == "OK"){
-      mutateTapsiRide(requestRideBody)
+    if (updateRideData?.result == "OK") {
+      mutateTapsiRide(requestRideBody);
     }
   }, [updateRideData]);
 
   return (
     <>
-      <Pressable
-        onPress={() =>
-          setRequestButton({
-            name: name,
-            type: serviceType,
-            category: categoryType,
-            mutateRideFunction: () =>
-              mutateUpdateRide({
-                rideId: zipwayRideId,
-                status: "FINDING_DRIVER",
-                trip: {
-                  accepted: false,
-                  categoryType,
-                  numberOfPassengers: 1,
-                  price,
-                  provider: "TAPSI",
-                  type: serviceType,
-                },
-              }),
-            isLoading: isTapsiRideLoading || isUpdateRideLoading,
-            commission,
-          })
-        }
-      >
-        <MotiView
-          className={classNames(
-            "h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-700 justify-center flex",
-            requestButton?.type == serviceType ? "bg-blue-200" : "bg-white"
-          )}
+      {price || minMaxPrice?.min ? (
+        <Pressable
+          onPress={() =>
+            setRequestButton({
+              name: name,
+              type: serviceType,
+              category: categoryType,
+              mutateRideFunction: () =>
+                mutateUpdateRide({
+                  rideId: zipwayRideId,
+                  status: "FINDING_DRIVER",
+                  trip: {
+                    accepted: false,
+                    categoryType,
+                    numberOfPassengers: 1,
+                    price,
+                    provider: "TAPSI",
+                    type: serviceType,
+                  },
+                }),
+              isLoading: isTapsiRideLoading || isUpdateRideLoading,
+              commission,
+            })
+          }
         >
-          {isLoading || (!price && !minMaxPrice?.min) ? (
-            <SkeletonPlaceholder borderRadius={4} angle={90}>
-              <SkeletonPlaceholder.Item
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="space-between"
-                width={Dimensions.get("screen").width - 65}
-                height={70}
-                backgroundColor={"#000"}
-              >
-                <SkeletonPlaceholder.Item width={110} height={30} />
-                <SkeletonPlaceholder.Item width={110} height={30} />
-              </SkeletonPlaceholder.Item>
-            </SkeletonPlaceholder>
-          ) : (
+          <MotiView
+            className={classNames(
+              "h-[70] w-full  rounded-[25px] px-4 mb-3 shadow-sm shadow-gray-300 justify-center flex",
+              requestButton?.type == serviceType ? "bg-blue-200" : "bg-white"
+            )}
+          >
             <MotiView
               from={{ translateY: 10, opacity: 0 }}
               animate={{ translateY: 0, opacity: 1 }}
@@ -216,9 +202,13 @@ const TapsiPriceItem = ({
                 )}
               </MotiView>
             </MotiView>
-          )}
+          </MotiView>
+        </Pressable>
+      ) : (
+        <MotiView className="w-full items-center justify-center">
+          <Text className="font-[IRANSansLight] text-gray-500">در حال حاضر سرویسی برای این مسیر ارائه نمیشود</Text>
         </MotiView>
-      </Pressable>
+      )}
     </>
   );
 };

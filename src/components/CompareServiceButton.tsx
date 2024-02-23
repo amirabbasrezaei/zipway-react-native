@@ -69,13 +69,14 @@ const CompareServiceButton = ({}: Props) => {
             className="h-full rounded-[25px] w-[300] bg-white flex flex-row items-center justify-between"
           >
             <View className="h-full w-[20%]  items-center justify-center">
-              <ArrowLeftIcon classStyle="fill-blue-500 w-8 h-8" />
+              <ArrowLeftIcon classStyle="fill-[#027de8] w-8 h-8" />
             </View>
             <MotiView
               transition={{ duration: 100, type: "timing" }}
               from={{ width: "100%" }}
-              animate={{ width: "80%" }}
-              className=" absolute right-0 bg-blue-500 h-full rounded-[25px] items-center justify-center"
+              animate={{ width: "80%", backgroundColor: isLoadingRequestRide ?  "#a1a1a1" : "#027de8"}}
+
+              className=" absolute right-0  h-full rounded-[25px] items-center justify-center"
             >
               {isLoadingRequestRide ? (
                 <ActivityIndicator color={"#fff"} size={24} />

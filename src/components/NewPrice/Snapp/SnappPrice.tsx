@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { SignInIcon, SnappTextIcon } from "../../Svgs";
 import { useMapStore } from "../../../stores/mapStore";
-import { MotiText, MotiView } from "moti";
+import { AnimatePresence, MotiText, MotiView } from "moti";
 import SnappLoginModal from "../../SnappAuth/SnappLoginModal";
 import { FocusContext, UseFocusContextArgs } from "../../FocusComponent";
 import { useAuthenticateStore } from "../../../stores/authenticateStore";
@@ -14,6 +14,7 @@ import {
 import SnappPriceItem from "./SnappPriceItem";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { trpc } from "../../../../utils/trpc";
+import PriceLoading from "../PriceLoading";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -39,8 +40,11 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   const { setFocusState } = useContext<UseFocusContextArgs>(FocusContext);
   const { snappAuthKey } = useAuthenticateStore();
   const { routeCoordinate } = useMapStore();
-  const { data: updateRideData, mutate: mutateUpdateRide } =
-    trpc.ride.updateRide.useMutation();
+  const {
+    data: updateRideData,
+    mutate: mutateUpdateRide,
+    isLoading: isUpdateRideLoading,
+  } = trpc.ride.updateRide.useMutation();
 
   const snappServiceTypesBody = {
     points: [
@@ -94,12 +98,10 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
   } = useSnappNewPrice();
 
   useEffect(() => {
-    if(updateRideData?.result == "OK"){
-      setUserState("isAuthorized")
+    if (updateRideData?.result == "OK") {
+      setUserState("isAuthorized");
     }
   }, [updateRideData]);
-
-  
 
   useEffect(() => {
     mutateSnappService(snappServiceTypesBody);
@@ -112,7 +114,11 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
       category.services.map((service) => service)
     );
 
-  services = services && [].concat(services[0], services[1], services[2]).filter((service) => service !== undefined );
+  services =
+    services &&
+    []
+      .concat(services[0], services[1], services[2])
+      .filter((service) => service !== undefined);
 
   useEffect(() => {
     if (snappAuthKey && services?.length && zipwayRideId) {
@@ -128,7 +134,6 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
             : null,
         })),
       });
-      
     }
     if (isSnappNewPriceError) {
       setUserState("isNotAuthorized");
@@ -168,32 +173,55 @@ const SnappPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
             </Pressable>
           </MotiView>
         ) : (
-          <>
-            {updateRideData?.commission && services?.length &&
-              services.map((service) => (
-                <SnappPriceItem
-                  commission={
-                    updateRideData.commission?.snapp[service.type]?.amount
-                  }
-                  requestButton={requestButton}
-                  selected={requestButton?.type == service?.type}
-                  key={service?.type}
-                  setRequestButton={setRequestButton}
-                  name={service?.name}
-                  isLoading={userState === "initial" || newSnappPriceLoading}
-                  serviceType={service?.type}
-                  navigation={navigation}
-                  photoUrl={service?.photo_url}
-                  price={
-                    newSnappPriceData?.data?.prices
-                      ? newSnappPriceData?.data?.prices.filter(
-                          (item) => item?.type === service?.type
-                        )[0]?.final / 10
-                      : null
-                  }
-                />
-              ))}
-          </>
+          <AnimatePresence exitBeforeEnter={true}>
+            {updateRideData?.commission && services?.length ? (
+              <MotiView
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{type: "timing", duration: 200}}
+                key="snappPrices"
+              >
+                {services.map((service) => (
+                  <SnappPriceItem
+                    commission={
+                      updateRideData.commission?.snapp[service.type]?.amount
+                    }
+                    requestButton={requestButton}
+                    selected={requestButton?.type == service?.type}
+                    key={service?.type}
+                    setRequestButton={setRequestButton}
+                    name={service?.name}
+                    isLoading={userState === "initial" || newSnappPriceLoading}
+                    serviceType={service?.type}
+                    navigation={navigation}
+                    photoUrl={service?.photo_url}
+                    price={
+                      newSnappPriceData?.data?.prices
+                        ? newSnappPriceData?.data?.prices.filter(
+                            (item) => item?.type === service?.type
+                          )[0]?.final / 10
+                        : null
+                    }
+                  />
+                ))}
+              </MotiView>
+            ) : isUpdateRideLoading ||
+              isSnappServiceLoading ||
+              newSnappPriceLoading ? (
+              <MotiView
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{type: "timing", duration: 200}}
+                key="snappPricesLoading"
+              >
+                <PriceLoading />
+                <PriceLoading />
+                <PriceLoading />
+              </MotiView>
+            ) : null}
+          </AnimatePresence>
         )}
       </View>
     </View>

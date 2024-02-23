@@ -1,6 +1,6 @@
 import MapboxGL from "@rnmapbox/maps";
 import { LocationObject } from "expo-location";
-import create from "zustand";
+import { create } from "zustand";
 
 export interface RouteCoordinate {
   origin?: number[] | null;
@@ -24,7 +24,8 @@ interface MapStoreType {
   ) => void;
   userLocation: MapboxGL.Location | null;
   setUserLocation: (input: MapStoreType["userLocation"]) => void;
-  // showNewTrip
+  isCameraChanging: boolean;
+  setIsCameraChanging: (e: MapStoreType["isCameraChanging"]) => void;
 }
 
 export const useMapStore = create<MapStoreType>((set) => ({
@@ -32,7 +33,7 @@ export const useMapStore = create<MapStoreType>((set) => ({
   setSearchLocationInput: (input) => set({ searchLocationInput: input }),
   searchLocationResults: [],
   setSearchLocationsResult: (input) => set({ searchLocationResults: input }),
-  cameraLocation: [],
+  cameraLocation: [51.35471199999998, 35.65329299999999],
   setCameraLocation: (e) => set({ cameraLocation: e }),
   routeCoordinate: null,
   setRouteCoordinate: (input: RouteCoordinate) =>
@@ -44,4 +45,8 @@ export const useMapStore = create<MapStoreType>((set) => ({
     set({ searchedLocationCoordinate: input }),
   userLocation: null,
   setUserLocation: (userLocation) => set({ userLocation }),
+  isCameraChanging: false,
+  setIsCameraChanging(e) {
+    set({ isCameraChanging: e });
+  },
 }));

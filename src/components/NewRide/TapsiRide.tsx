@@ -73,7 +73,7 @@ const TapsiNewRide = ({ navigation }: Props) => {
               {activeTrip.driverInfo.plate.character}
             </Text>
             <Text className="font-[IRANSans] text-gray-600" key={"secondPart"}>
-              {activeTrip.driverInfo.plate.part_a}
+              {activeTrip.driverInfo.plate.part_b}
             </Text>
             <Text className="font-[IRANSans] text-gray-600" key={"province-ID"}>
               {activeTrip.driverInfo.plate.iran_id}
@@ -81,7 +81,7 @@ const TapsiNewRide = ({ navigation }: Props) => {
           </View>
         )}
         <Text className="font-[IRANSansMedium] text-gray-600 text-[17px]">
-          {activeTrip.driverInfo.vehicle_model}
+        {`${activeTrip.driverInfo.vehicle_model} ${activeTrip.driverInfo.vehicle_color}`}
         </Text>
       </View>
       <View className="w-full flex items-center justify-between flex-row ">

@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Zipway",
-    "slug": "Zipway",
+    "name": "ZipwayDev",
+    "slug": "ZipwayDev",
     "scheme": "zipway",
-    "version": "2.2.0",
+    "version": "2.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,7 +32,7 @@
         "SIM_STATE_READY",
         "ACCESS_FINE_LOCATION"
       ],
-      "package": "com.zipway.zipway",
+      "package": "com.zipway.zipwaydev",
       "versionCode": 5,
       "intentFilters": [
         {
@@ -62,7 +62,8 @@
           "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiYW1pcmFiYmFzOTkiLCJhIjoiY2w5eGJreWg3MDhtZzNwczRha3g0cDJjbSJ9.Z9DGh-XJrE7B_D60pzsyUA"
         }
       ],
-      "./src/plugins/android-manifest.plugin.ts"
+      "./src/plugins/android-manifest.plugin.ts",
+      "expo-build-properties"
     ],
     "extra": {
       "eas": {

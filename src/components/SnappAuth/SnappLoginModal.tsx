@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FocusContext, UseFocusContextArgs } from "../FocusComponent";
 import SnappSignIn from "./SnappSignIn";
 import SnappVerifySMS from "./SnappVerifySMS";
-import { AnimatePresence } from "@legendapp/motion";
+
 type Props = {};
 
 export type StepState = number;

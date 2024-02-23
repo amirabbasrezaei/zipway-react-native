@@ -6,20 +6,16 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Motion } from "@legendapp/motion";
+
 import { ArrowLeftIcon, SnappTextIcon } from "../Svgs";
 import { PhoneNumberInput, StepState } from "./SnappLoginModal";
 import classNames from "classnames";
 import { useVerifySnappSmsToken } from "../../ReactQuery/SnappRequestHooks";
 import * as SecureStore from "expo-secure-store";
-import {
-  getHash,
-  requestHint,
-  startOtpListener,
-  useOtpVerify,
-} from "react-native-otp-verify";
+
 import { useAuthenticateStore } from "../../stores/authenticateStore";
 import { BackHandler } from "react-native";
+import { MotiView } from "moti";
 
 type Props = {
   step: StepState;
@@ -76,8 +72,9 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
   }, []);
 
   return (
-    <Motion.View
-      initial={{ translateX: 300, opacity: 0.5 }}
+    <MotiView
+    transition={{type: "timing", duration: 300}}
+      from={{ translateX: 300, opacity: 0.5 }}
       animate={{ translateX: 0, opacity: 1 }}
       exit={{ translateX: -300, opacity: 0.5 }}
       onTouchStart={(e) => e.stopPropagation()}
@@ -174,7 +171,7 @@ const SnappVerifySMS = ({ setStep, step, phoneNumberInput }: Props) => {
           <Text className="font-[IRANSansMedium] text-white">ورود</Text>
         )}
       </Pressable>
-    </Motion.View>
+    </MotiView>
   );
 };
 

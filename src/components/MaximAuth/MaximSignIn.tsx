@@ -7,13 +7,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect } from "react";
-import { Motion } from "@legendapp/motion";
 import { PhoneNumberInput, StepState } from "./MaximLoginModal";
 import { XMarkIcon } from "../Svgs";
 import classNames from "classnames";
 import { useSendMaximVerifyCode } from "../../ReactQuery/maximRequestHooks";
 import * as SecureStore from "expo-secure-store";
 import { useAuthenticateStore } from "../../stores/authenticateStore";
+import { MotiView } from "moti";
 
 type Props = {
   step: StepState;
@@ -58,8 +58,8 @@ const MaximSignIn = ({
   }, [sendMaximVerifyCodeData]);
 
   return (
-    <Motion.View
-      initial={{ translateX: 300, opacity: 0.5 }}
+    <MotiView
+      from={{ translateX: 300, opacity: 0.5 }}
       animate={{ translateX: 0, opacity: 1 }}
       exit={{ translateX: -300, opacity: 0.5 }}
       onTouchStart={(e) => e.stopPropagation()}
@@ -114,7 +114,7 @@ const MaximSignIn = ({
           <Text className="font-[IRANSansMedium] text-white">ورود</Text>
         )}
       </Pressable>
-    </Motion.View>
+    </MotiView>
   );
 };
 

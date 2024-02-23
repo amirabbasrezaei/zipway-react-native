@@ -7,7 +7,7 @@ import { Linking } from "react-native";
 import { PhoneIcon } from "../Svgs";
 import { SvgUri } from "react-native-svg";
 import { useSnappCancelRide } from "../../ReactQuery/SnappRequestHooks";
-import { MotiView } from "moti";
+import { MotiText, MotiView } from "moti";
 import splitNumber from "../../../utils/splitNumber";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 type Props = { navigation: NativeStackNavigationProp<any, any> };
@@ -41,8 +41,6 @@ const SnappNewRide = ({ navigation }: Props) => {
     }
   }, [isSnappCancelRideSuccess]);
 
-  console.log(cancelRideProgressBar);
-  console.log(isCancelRideProgressBarActive);
   
   return (
     <View className="flex flex-col gap-y-6 flex-1 h-full w-full px-6 pt-2 items-center">
@@ -63,7 +61,7 @@ const SnappNewRide = ({ navigation }: Props) => {
         </Pressable>
         <View className="flex-row items-center  gap-4">
           <Text className="font-[IRANSansLight] text-gray-800 text-[12px]">
-            {activeTrip.driverInfo.driver_name}
+            {`${activeTrip.driverInfo.driver_name}`}
           </Text>
           <Image
             className="w-14 h-14 rounded-full"
@@ -92,15 +90,15 @@ const SnappNewRide = ({ navigation }: Props) => {
       >
         <MotiView
           className="bg-red-500 absolute left-0 bottom-0 flex-1 h-full  rounded-[14px]"
-          transition={{ type: "timing", duration: 100 }}
+          transition={{ type: "timing", duration: 200 }}
           animate={{ width: `${cancelRideProgressBar}%` }}
         />
         {isSnappCancelRideLoading ? (
           <ActivityIndicator size={"small"} color="#fff" />
         ) : (
-          <Text className="font-[IRANSansMedium] text-gray-700 text-[11px] ">
+          <MotiText className="font-[IRANSansMedium] text-gray-700 text-[11px] ">
             لغو درخواست
-          </Text>
+          </MotiText>
         )}
       </Pressable>
     </View>

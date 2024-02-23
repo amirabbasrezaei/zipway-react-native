@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-const BASE_URL = "https://api.snapp.site/v2/passenger/newprice/s/1/251";
+const BASE_URL = "https://api.snapp.site/v2/passenger/newprice/s/1/271";
 
 const TOKEN = `Bearer eyJhbGciOiJSUzUxMiIsImtpZCI6Ino4YTRsNG9PRkVxZ2VoUllEQlpQK2ZwclBuTERMbWFia3NsT3hWVnBMTkUiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOlsicGFzc2VuZ2VyIl0sImVtYWlsIjoiYWJiYXNzeHoyQGdtYWlsLmNvbSIsImV4cCI6MTY3MjIxOTc4MSwiaWF0IjoxNjcxMDEwMTgxLCJpc3MiOjEsImp0aSI6IjFqOEhKSHVSRWUyNHhiSjBQVjRsNlhtTlBETUJuRWJjbXdkaktkZnlpOEkiLCJzaWQiOiIySXRvTEFDN3F6NjZtdTJ2NTFWcGpXdUEzODUiLCJzdWIiOiJnM216MG5uMXB6cjBRbGUifQ.HDMSfJHqwAPRTHQN4hLUc9-HJMk5x3raYRANXWK3crJaa-6qNCR92xq-s2d4tixXNUpVRbDiJeJ6P_wBQtfjQ-aoG1i_zNy2PEqeRrjNVtgZKkf3A5zVnGqPgRhzIb9Ni5SdJJIHCAUHLPnP_KbRzq8nMp17Gxwozrn9usHoWlQU1Kvhmb2Il4h_dNeP6WPrnyQdPwKQBuCbcvOYii42xFo13tRTQgur6bHIDWhZw6Nqoy6_zk-SUn18FOMDH3-TTl_kw1RY-my4bM-DuYpOnrRf6GDeMUcxi9j4qRkFh2UKGkyvGxhaGRkgqOtQnE1dKOW_FEuPL8wdE52oQ-HQQ67BGKw4R25s7uiRB1djEZoNw22QrFtZiuH0palHomjunG4H-tAqRYDJvPq0oYawCguK-NLN5R-JTjxFCffPeRO-DBnfEz-zJ3KSjHP91frzs5gD6aCnPxHnmZHZq6QaOt1RtOo60C7s_jZHAq65bmhr5y09VcqtA8ClEAWMa7Yh4FP_lEM_t07XE94RbVU1YBrSUTLHyslRU8FkGb59WZmZGqwInuOOQ-JUe10WNRgn8pYffx8zS3U3jUwjaMx-qO9TVwoDDCnl6kyhkVAhHi_16u2U49blqnoCZTLHZeBFHPPXQ0WD_VvmdYmUHiTfhgqJH3WgL48AnDMnTZ-SBS8`;
 
@@ -81,7 +81,7 @@ export async function verifySnappSmsTokenRequest(body) {
 
 export async function snappServiceTypesRequest(body, headers) {
   const response = await axios.post(
-    `https://blackgate.snapp.site/v2/servicetypes`,
+    `https://api.snapp.site/mocha/v2/servicetypes`,
     body,
     {
       headers: {

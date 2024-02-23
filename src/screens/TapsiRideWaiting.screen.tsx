@@ -8,7 +8,7 @@ import classNames from "classnames";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppStore } from "../stores/appStore";
 import { trpc } from "../../utils/trpc";
-import { useMutation } from "@tanstack/react-query";
+import { useZipwayConfigStore } from "../stores/zipwayConfigStore";
 
 type Props = {
   navigation: NativeStackNavigationProp<any, any>;
@@ -16,28 +16,24 @@ type Props = {
 
 const TapsiRideWaiting = ({ navigation }: Props) => {
   const { activeTrip, setActiveTrip, zipwayRideId } = useAppStore();
-  const { isTapsiRideWaitingStatusLoading, tapsiRideWaitingStatusData } =
-    useTapsiRideWaitingStatus(activeTrip.tripId);
+  const { tapsiRideWaitingStatusData } = useTapsiRideWaitingStatus(
+    activeTrip.tripId
+  );
   const {
     mutateTapsiCancelRideWaiting,
     isTapsiCancelRideWaitingLoading,
     tapsiCancelRideDataWaiting,
   } = useTapsiCancelRideWaiting();
-  const {
-    isLoading: isUpdateRideLoading,
-    mutate: mutateUpdateRide,
-    data: updateRideData,
-  } = trpc.ride.updateRide.useMutation();
-
+  const { isLoading: isUpdateRideLoading, mutate: mutateUpdateRide } =
+    trpc.ride.updateRide.useMutation();
+  const { appConfig } = useZipwayConfigStore();
+  console.log(appConfig?.appInfo);
   useEffect(() => {
-    // tapsiRideWaitingStatusData?.data &&
-    //   console.log(tapsiRideWaitingStatusData?.data["ride"]["status"]);
     if (tapsiCancelRideDataWaiting?.result == "OK") {
       mutateUpdateRide({
         rideId: zipwayRideId,
         status: "CANCELLED",
       });
-      // console.log("tapsiCancelRideDataWaiting", tapsiCancelRideDataWaiting);
       setActiveTrip(null);
       navigation.navigate("MapScreen");
     }
@@ -49,7 +45,7 @@ const TapsiRideWaiting = ({ navigation }: Props) => {
         status: "ACCEPTED",
         trip: {
           accepted: true,
-          tripId:activeTrip.tripId,
+          tripId: activeTrip.tripId,
           type: activeTrip.type,
           provider: "TAPSI",
           driverInfo: {
@@ -101,7 +97,7 @@ const TapsiRideWaiting = ({ navigation }: Props) => {
             vehicle_model:
               tapsiRideWaitingStatusData.data["ride"]["driver"]["vehicle"][
                 "model"
-              ]
+              ],
           },
         },
       });
@@ -165,12 +161,30 @@ const TapsiRideWaiting = ({ navigation }: Props) => {
   }, [tapsiRideWaitingStatusData]);
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-14">
-      <View className="h-[300] w-[350]">
-        {/* {gif ? (
-          <Image className="h-[250] w-[350]" source={{ uri: gif }} />
-        ) : null} */}
+    <View className="flex-1 justify-center items-center bg-white px-14 gap-y-10">
+      <View
+        style={{
+          width: appConfig.appInfo.rideWaiting.image.width,
+          height: appConfig.appInfo.rideWaiting.image.height,
+        }}
+      >
+        {appConfig?.appInfo?.rideWaiting?.image ? (
+          <Image
+            style={{
+              borderRadius: appConfig.appInfo.rideWaiting.image.borderRadius,
+            }}
+            // className="h-[250] w-[350]"
+            source={{
+              uri: appConfig.appInfo.rideWaiting.image.url,
+              width: appConfig.appInfo.rideWaiting.image.width,
+              height: appConfig.appInfo.rideWaiting.image.height,
+            }}
+          />
+        ) : null}
       </View>
+      <Text className="font-[IRANSans] text-[13px]">
+        {appConfig.appInfo.rideWaiting.rideWaitingText}
+      </Text>
       <Pressable
         disabled={isTapsiCancelRideWaitingLoading || isUpdateRideLoading}
         className={classNames(

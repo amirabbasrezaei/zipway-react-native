@@ -3,7 +3,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { FocusContext, UseFocusContextArgs } from "../FocusComponent";
 import TapsiSignIn from "./TapsiSignIn";
 import TapsiVerifySMS from "./TapsiVerifySMS";
-import { AnimatePresence } from "@legendapp/motion";
+import { AnimatePresence } from "moti";
+
 type Props = {};
 
 export type StepState = number;
@@ -24,7 +25,7 @@ const TapsiLoginModal = (props: Props) => {
       onTouchStart={() => setFocusState(null)}
       className="flex-1 w-full h-full bg-transparent justify-center items-center "
     >
-      <AnimatePresence>
+      <AnimatePresence exitBeforeEnter={true}>
         {step === 1 ? (
           <TapsiSignIn phoneNumberInput={phoneNumberInput} setPhoneNumberInput={setPhoneNumberInput} step={step} setStep={setStep} />
         ) : step === 2 ? (

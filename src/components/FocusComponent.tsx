@@ -1,4 +1,5 @@
-import { AnimatePresence, Motion } from "@legendapp/motion";
+
+import { AnimatePresence, MotiView } from "moti";
 import { createContext,  useState } from "react";
 import {  View } from "react-native";
 
@@ -28,10 +29,10 @@ const FocusComponentProvider = ({ children }: Props) => {
       <AnimatePresence>
         {children}
         {focusState?.focusComonent != null ? (
-          <Motion.View
+          <MotiView
             key="container"
             className="absolute top-0 right-0 left-0 bottom-0 bg-[#0000000d]"
-            initial={{ opacity: 0 }}
+            from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onTouchStart={() => {
               setFocusState(null);
@@ -62,7 +63,7 @@ const FocusComponentProvider = ({ children }: Props) => {
             >
               {focusState?.focusComonent}
             </View>
-          </Motion.View>
+          </MotiView>
         ) : null}
       </AnimatePresence>
     </FocusContext.Provider>
