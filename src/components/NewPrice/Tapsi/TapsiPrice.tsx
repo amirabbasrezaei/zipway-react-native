@@ -139,7 +139,7 @@ const TapsiPrice = ({ navigation, setRequestButton, requestButton }: Props) => {
             className=" bg-white h-[200] rounded-[15px] justify-center items-center flex flex-col gap-y-4"
           >
             <MotiText className="font-[IRANSansMedium] text-gray-500 text-[12px] ">
-              برای استفاده از خدمات وارد اکانت اسنپ خود شوید.
+              برای استفاده از خدمات وارد اکانت تپسی خود شوید.
             </MotiText>
 
             <Pressable

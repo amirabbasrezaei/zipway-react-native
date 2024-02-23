@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "ZipwayDev",
-    "slug": "ZipwayDev",
+    "name": "Zipway",
+    "slug": "Zipway",
     "scheme": "zipway",
     "version": "2.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -32,7 +32,7 @@
         "SIM_STATE_READY",
         "ACCESS_FINE_LOCATION"
       ],
-      "package": "com.zipway.zipwaydev",
+      "package": "com.zipway.zipway",
       "versionCode": 5,
       "intentFilters": [
         {

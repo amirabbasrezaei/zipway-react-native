@@ -30,7 +30,7 @@ const SnappRideWaiting = ({ navigation }: Props) => {
 
   const { mutateSnappCancelRide, isSnappCancelRideSuccess, isSnappCancelRideLoading } =
     useSnappCancelRide();
-  const { isLoading: isUpdateRideLoading, mutate: mutateUpdateRide } =
+  const { isLoading: isUpdateRideLoading, mutate: mutateUpdateRide,data: updateRideData } =
     trpc.ride.updateRide.useMutation();
   const { appConfig } = useZipwayConfigStore();
   useEffect(() => {
@@ -42,13 +42,17 @@ const SnappRideWaiting = ({ navigation }: Props) => {
   }, []);
 
   useEffect(() => {
-    mutateUpdateRide({ rideId: zipwayRideId, status: "CANCELLED" });
+    if(isSnappCancelRideSuccess){
 
-    setActiveTrip(null);
-    navigation.navigate("MapScreen");
+      mutateUpdateRide({ rideId: zipwayRideId, status: "CANCELLED" });
+      setActiveTrip(null);
+      navigation.navigate("MapScreen");
+    }
   }, [isSnappCancelRideSuccess]);
 
+
   useEffect(() => {
+
     if (isSnappCancelWaitingSuccess) {
       (async () => {
         await mutateUpdateRide({ rideId: zipwayRideId, status: "CANCELLED" });
@@ -58,6 +62,10 @@ const SnappRideWaiting = ({ navigation }: Props) => {
         navigation.navigate("MapScreen");
       });
     }
+  }, [isSnappCancelWaitingSuccess])
+
+  useEffect(() => {
+    
 
     if (snappEventData?.data?.events[0]?.type == "driver_accepted_ride") {
       (async () => {
@@ -94,7 +102,7 @@ const SnappRideWaiting = ({ navigation }: Props) => {
               plate_number_url:
                 snappEventData?.data?.events[0]?.data.driver.plate_number_url,
               vehicle_color:
-                snappEventData?.data?.events[0]?.data.driver.vehicle_color,
+                snappEventData?.data?.events[0]?.data.driver.vehicle_color_hex,
               vehicle_model:
                 snappEventData?.data?.events[0]?.data.driver.vehicle_model,
             },
@@ -102,46 +110,51 @@ const SnappRideWaiting = ({ navigation }: Props) => {
         });
       })()
         .then(() => {
-          setActiveTrip({
-            accepted: true,
-            driverInfo: {
-              cellphone: snappEventData?.data?.events[0]?.data.driver.cellphone,
-              driver_name:
-                snappEventData?.data?.events[0]?.data.driver.driver_name,
-              image_url: snappEventData?.data?.events[0]?.data.driver.image_url,
-              plate: {
-                character:
-                  snappEventData?.data?.events[0]?.data.driver.plate.character,
-                iran_id:
-                  snappEventData?.data?.events[0]?.data.driver.plate.iran_id,
-                part_a:
-                  snappEventData?.data?.events[0]?.data.driver.plate.part_a,
-                part_b:
-                  snappEventData?.data?.events[0]?.data.driver.plate.part_b,
+          if(updateRideData.result == "OK"){
+
+            setActiveTrip({
+              accepted: true,
+              driverInfo: {
+                cellphone: snappEventData?.data?.events[0]?.data.driver.cellphone,
+                driver_name:
+                  snappEventData?.data?.events[0]?.data.driver.driver_name,
+                image_url: snappEventData?.data?.events[0]?.data.driver.image_url,
+                plate: {
+                  character:
+                    snappEventData?.data?.events[0]?.data.driver.plate.character,
+                  iran_id:
+                    snappEventData?.data?.events[0]?.data.driver.plate.iran_id,
+                  part_a:
+                    snappEventData?.data?.events[0]?.data.driver.plate.part_a,
+                  part_b:
+                    snappEventData?.data?.events[0]?.data.driver.plate.part_b,
+                },
+                driver_location_info: {
+                  lat: snappEventData?.data?.events[0]?.data.driver_location_info
+                    .lat,
+                  lng: snappEventData?.data?.events[0]?.data.driver_location_info
+                    .lng,
+                },
+                plate_number_url:
+                  snappEventData?.data?.events[0]?.data.driver.plate_number_url,
+                vehicle_color:
+                  snappEventData?.data?.events[0]?.data.driver.vehicle_color,
+                vehicle_model:
+                  snappEventData?.data?.events[0]?.data.driver.vehicle_model,
               },
-              driver_location_info: {
-                lat: snappEventData?.data?.events[0]?.data.driver_location_info
-                  .lat,
-                lng: snappEventData?.data?.events[0]?.data.driver_location_info
-                  .lng,
-              },
-              plate_number_url:
-                snappEventData?.data?.events[0]?.data.driver.plate_number_url,
-              vehicle_color:
-                snappEventData?.data?.events[0]?.data.driver.vehicle_color,
-              vehicle_model:
-                snappEventData?.data?.events[0]?.data.driver.vehicle_model,
-            },
-            price: snappEventData?.data?.events[0]?.data.ride_info.final_price,
-          });
-          navigation.navigate("MapScreen");
+              price: snappEventData?.data?.events[0]?.data.ride_info.final_price,
+            });
+            navigation.navigate("MapScreen");
+          }
         })
         .catch((error) => {
+          if (Object.keys(error).length !== 0) {
           mutateSnappCancelRide(activeTrip.tripId);
-          mutateLog({ error, message: "SnappRideWaiting" });
+          mutateLog({ error, message: "error while updating ride", section: "SnappRideWaiting" });
+          }
         });
     }
-  }, [isSnappCancelWaitingSuccess, snappEventData]);
+  }, [ snappEventData]);
 
   useEffect(() => {
     const backAction = () => {
