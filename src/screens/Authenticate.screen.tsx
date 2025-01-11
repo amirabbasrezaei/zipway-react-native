@@ -26,7 +26,11 @@ const AuthenticateScreen = ({ navigation }: Props) => {
   const isFocused = useIsFocused();
   const { setAppConfig, appConfig } = useZipwayConfigStore();
   const { mutate: mutateAppLog } = trpc.app.log.useMutation();
+<<<<<<< HEAD
   const { snappConfigMutate, snappConfigData, isSnappConfigSuccess } =
+=======
+  const { snappConfigMutate } =
+>>>>>>> c2c45c4 (fix)
     useSnappConfigMutation();
 
   const {
@@ -46,6 +50,10 @@ const AuthenticateScreen = ({ navigation }: Props) => {
       await SplashScreen.hideAsync();
     })();
     if (zipwayConfigData?.userInfo) {
+<<<<<<< HEAD
+=======
+      console.log(zipwayConfigData)
+>>>>>>> c2c45c4 (fix)
       snappConfigMutate();
       setAppConfig(zipwayConfigData);
       setAppState("AUTHENTICATED");

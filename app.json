@@ -1,7 +1,12 @@
 {
   "expo": {
+<<<<<<< HEAD
     "name": "Zipway",
     "slug": "Zipway",
+=======
+    "name": "ZipwayDev",
+    "slug": "ZipwayDev",
+>>>>>>> c2c45c4 (fix)
     "scheme": "zipway",
     "version": "2.1.1",
     "orientation": "portrait",
@@ -20,7 +25,11 @@
     ],
     "ios": {
       "supportsTablet": true,
+<<<<<<< HEAD
       "bundleIdentifier": "com.zipway.zipway",
+=======
+      "bundleIdentifier": "com.zipway.zipwaydev",
+>>>>>>> c2c45c4 (fix)
       "buildNumber": "5"
     },
     "android": {
@@ -32,7 +41,11 @@
         "SIM_STATE_READY",
         "ACCESS_FINE_LOCATION"
       ],
+<<<<<<< HEAD
       "package": "com.zipway.zipway",
+=======
+      "package": "com.zipway.zipwaydev",
+>>>>>>> c2c45c4 (fix)
       "versionCode": 5,
       "intentFilters": [
         {
@@ -67,7 +80,11 @@
     ],
     "extra": {
       "eas": {
+<<<<<<< HEAD
         "projectId": "44830603-a0a8-4d67-9c9f-e219a7ac6e7f"
+=======
+        "projectId": "37bb3ef5-0385-4abd-b113-029b44fa4230"
+>>>>>>> c2c45c4 (fix)
       }
     }
   }

@@ -114,7 +114,11 @@ export default function App() {
               >
                 <RootStack.Navigator
                   screenOptions={{ animation: "slide_from_right" }}
+<<<<<<< HEAD
                   initialRouteName="AuthScreen"
+=======
+                  initialRouteName="Logout"
+>>>>>>> c2c45c4 (fix)
                 >
               
                   {appConfig ? (
